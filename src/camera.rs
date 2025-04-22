@@ -50,9 +50,4 @@ pub fn update_screen(
         center.x + half_width,
         center.y - half_height,
     );
-
-    info!(
-        "top-left corner: {}, {}",
-        screen.rect.min.x, screen.rect.min.y
-    );
 }
