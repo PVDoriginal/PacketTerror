@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+pub const SCALE: f32 = 0.2;
+
 #[derive(Resource, Default)]
 pub struct Screen {
     pub rect: Rect,
@@ -20,7 +22,7 @@ pub fn init_camera(mut commands: Commands) {
     commands.spawn((
         Camera2d,
         OrthographicProjection {
-            scale: 0.2,
+            scale: SCALE,
             ..OrthographicProjection::default_2d()
         },
         Msaa::Off,

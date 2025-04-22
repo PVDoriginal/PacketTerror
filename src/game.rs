@@ -21,5 +21,6 @@ impl Plugin for GamePlugin {
 fn main_menu_state(mut next_state: ResMut<NextState<GameStates>>, keys: Res<ButtonInput<KeyCode>>) {
     if keys.just_pressed(KeyCode::Space) {
         next_state.set(GameStates::InGame);
+        info!("Just pressed space");
     }
 }
