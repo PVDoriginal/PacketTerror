@@ -1,4 +1,7 @@
 use bevy::prelude::*;
+use shop_items::init_shop_items;
+
+pub mod shop_items;
 
 pub struct ShopPlugin;
 
@@ -13,13 +16,17 @@ pub struct UpdateCurrencyEvent(i32);
 impl Plugin for ShopPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Currency { value: 0 });
+        app.add_systems(Startup, init_shop_items);
         app.add_systems(Update, update_currency);
         app.add_event::<UpdateCurrencyEvent>();
     }
 }
 
-pub fn update_currency(mut currency: ResMut<Currency>, mut event_remove : EventReader<UpdateCurrencyEvent>) {
-    for ev in  event_remove.read(){
+pub fn update_currency(
+    mut currency: ResMut<Currency>,
+    mut event_remove: EventReader<UpdateCurrencyEvent>,
+) {
+    for ev in event_remove.read() {
         currency.value += ev.0;
     }
 }
