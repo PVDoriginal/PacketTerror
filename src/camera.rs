@@ -1,6 +1,9 @@
-use bevy::prelude::*;
+use bevy::{math::vec3, prelude::*};
 
-pub const SCALE: f32 = 0.2;
+use crate::grid::GRID_M;
+use crate::grid::GRID_N;
+
+pub const SCALE: f32 = 0.5;
 
 #[derive(Resource, Default)]
 pub struct Screen {
@@ -26,6 +29,11 @@ pub fn init_camera(mut commands: Commands) {
             ..OrthographicProjection::default_2d()
         },
         Msaa::Off,
+        Transform::from_translation(vec3(
+            GRID_N as f32 / 2. * 21. - 10.5,
+            GRID_M as f32 / 2. * 21. - 72.3 / 2.,
+            10.,
+        )),
     ));
 }
 

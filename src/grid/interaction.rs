@@ -2,6 +2,8 @@ use bevy::{math::vec3, prelude::*};
 
 use crate::{camera::SCALE, shop::ShopItem};
 
+use super::Grid;
+
 pub struct InteractionPlugin;
 
 impl Plugin for InteractionPlugin {
@@ -32,16 +34,23 @@ pub fn drop_item(
     trigger: Trigger<Pointer<DragEnd>>,
     mut transforms: Query<(&mut Transform, &ShopItem, &Sprite)>,
     mut commands: Commands,
+    mut grid: ResMut<Grid>,
 ) {
     let Ok((mut transform, shop_item, sprite)) = transforms.get_mut(trigger.entity()) else {
         return;
     };
     transform.translation.z = 0.;
 
+    let Some(pos) = grid.world_to_grid(transform.translation.truncate()) else {
+        transform.translation = shop_item.pos.extend(0.);
+        return;
+    };
+
     let mut obj = commands.spawn((
         sprite.clone(),
-        Transform::from_translation(transform.translation),
+        Transform::from_translation(pos.extend(0).as_vec3() * 21.),
     ));
+    grid.grid[pos.x as usize][pos.y as usize] = Some(obj.id());
     shop_item.item_type.add_component(&mut obj);
 
     transform.translation = shop_item.pos.extend(0.);

@@ -1,6 +1,9 @@
 use bevy::{math::vec3, prelude::*};
 
-use crate::items::{PC, Router, Switch};
+use crate::{
+    camera::init_camera,
+    items::{PC, Router, Switch},
+};
 
 pub struct ShopPlugin;
 
@@ -42,7 +45,7 @@ pub struct UpdateCurrencyEvent(i32);
 impl Plugin for ShopPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Currency { value: 0 });
-        app.add_systems(Startup, init_shop_items);
+        app.add_systems(Startup, init_shop_items.after(init_camera));
         app.add_systems(Update, update_currency);
         app.add_event::<UpdateCurrencyEvent>();
     }
@@ -57,22 +60,30 @@ pub fn update_currency(
     }
 }
 
-pub fn init_shop_items(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let pos = vec3(0., -50., 0.);
+pub fn init_shop_items(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    camera: Query<&Transform, With<Camera2d>>,
+) {
+    let Ok(camera_x) = camera.get_single().map(|x| x.translation.x) else {
+        return;
+    };
+    let pos = vec3(camera_x, -50., 0.);
+
     commands.spawn((
         ShopItem::new(ItemType::Router, pos.truncate()),
         Sprite::from_image(asset_server.load("router.png")),
         Transform::from_translation(pos),
     ));
 
-    let pos = vec3(-30., -50., 0.);
+    let pos = vec3(camera_x - 30., -50., 0.);
     commands.spawn((
         ShopItem::new(ItemType::Switch, pos.truncate()),
         Sprite::from_image(asset_server.load("switch.png")),
         Transform::from_translation(pos),
     ));
 
-    let pos = vec3(30., -50., 0.);
+    let pos = vec3(camera_x + 30., -50., 0.);
     commands.spawn((
         ShopItem::new(ItemType::PC, pos.truncate()),
         Sprite::from_image(asset_server.load("pc.png")),
