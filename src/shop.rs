@@ -5,24 +5,69 @@ use crate::{
     items::{PC, Router, Switch},
 };
 
-pub struct ShopPlugin;
-
 #[derive(Resource)]
 pub struct Currency {
-    value: i32,
+    pub value: i32,
 }
+#[derive(Component)]
+pub struct CurrencyDisplay;
+
+#[derive(Event)]
+pub struct UpdateCurrencyEvent(pub i32);
+
+pub fn init_currency(mut commands: Commands, currency: Res<Currency>) {
+    // Note: text without textBundle seems to float to screen top-left
+    commands.spawn((
+        CurrencyDisplay,
+        Text::new(format!("Packet credits: {}", currency.value)),
+        TextFont {
+            font_size: 14.0,
+            ..Default::default()
+        },
+    ));
+}
+pub struct CurrencyPlugin;
+impl Plugin for CurrencyPlugin {
+    fn build(&self, app: &mut App) {
+        app.insert_resource(Currency { value: 30 });
+        app.add_systems(Startup, init_currency);
+        app.add_systems(Update, update_currency);
+    }
+}
+pub fn update_currency(
+    mut currency: ResMut<Currency>,
+    mut event_update: EventReader<UpdateCurrencyEvent>,
+    mut display_currency: Query<&mut Text, With<CurrencyDisplay>>,
+) {
+    for ev in event_update.read() {
+        if currency.value + ev.0 >= 0 {
+            currency.value += ev.0;
+        }
+    }
+
+    let Ok(mut text) = display_currency.get_single_mut() else {
+        return;
+    };
+    text.0 = format!("Packet credits: {}", currency.value);
+}
+
+pub struct ShopPlugin;
 
 #[derive(Component)]
 pub struct ShopItem {
     pub item_type: ItemType,
     pub pos: Vec2,
+    pub price: u32,
 }
 impl ShopItem {
-    pub fn new(item_type: ItemType, pos: Vec2) -> Self {
-        Self { item_type, pos }
+    pub fn new(item_type: ItemType, pos: Vec2, price: u32) -> Self {
+        Self {
+            item_type,
+            pos,
+            price,
+        }
     }
 }
-
 pub enum ItemType {
     PC,
     Router,
@@ -39,24 +84,11 @@ impl ItemType {
     }
 }
 
-#[derive(Event)]
-pub struct UpdateCurrencyEvent(i32);
-
 impl Plugin for ShopPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(Currency { value: 0 });
+        app.add_plugins(CurrencyPlugin);
         app.add_systems(Startup, init_shop_items.after(init_camera));
-        app.add_systems(Update, update_currency);
         app.add_event::<UpdateCurrencyEvent>();
-    }
-}
-
-pub fn update_currency(
-    mut currency: ResMut<Currency>,
-    mut event_remove: EventReader<UpdateCurrencyEvent>,
-) {
-    for ev in event_remove.read() {
-        currency.value += ev.0;
     }
 }
 
@@ -68,24 +100,26 @@ pub fn init_shop_items(
     let Ok(camera_x) = camera.get_single().map(|x| x.translation.x) else {
         return;
     };
-    let pos = vec3(camera_x, -50., 0.);
+    let pos = vec3(camera_x, -30., 0.);
 
     commands.spawn((
-        ShopItem::new(ItemType::Router, pos.truncate()),
+        ShopItem::new(ItemType::Router, pos.truncate(), 15),
         Sprite::from_image(asset_server.load("router.png")),
         Transform::from_translation(pos),
+        Name::new("Router"),
     ));
 
-    let pos = vec3(camera_x - 30., -50., 0.);
+    let pos = vec3(camera_x - 30., -30., 0.);
     commands.spawn((
-        ShopItem::new(ItemType::Switch, pos.truncate()),
+        ShopItem::new(ItemType::Switch, pos.truncate(), 10),
         Sprite::from_image(asset_server.load("switch.png")),
         Transform::from_translation(pos),
+        Name::new("Switch"),
     ));
 
-    let pos = vec3(camera_x + 30., -50., 0.);
+    let pos = vec3(camera_x + 30., -30., 0.);
     commands.spawn((
-        ShopItem::new(ItemType::PC, pos.truncate()),
+        ShopItem::new(ItemType::PC, pos.truncate(), 100),
         Sprite::from_image(asset_server.load("pc.png")),
         Transform::from_translation(pos),
         Name::new("PC"),

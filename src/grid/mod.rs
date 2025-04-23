@@ -36,6 +36,7 @@ pub fn init_grid(mut commands: Commands, asset_server: Res<AssetServer>) {
             commands.spawn((
                 Sprite::from_image(asset_server.load("grid_cell.png")),
                 Transform::from_translation(vec3(i as f32 * 21., j as f32 * 21., -1.)),
+                Name::new("Grid_block"),
             ));
         }
     }

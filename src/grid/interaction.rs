@@ -1,6 +1,9 @@
 use bevy::{math::vec3, prelude::*};
 
-use crate::{camera::SCALE, shop::ShopItem};
+use crate::{
+    camera::SCALE,
+    shop::{Currency, ShopItem, UpdateCurrencyEvent},
+};
 
 use super::Grid;
 
@@ -35,14 +38,21 @@ pub fn drop_item(
     mut transforms: Query<(&mut Transform, &ShopItem, &Sprite)>,
     mut commands: Commands,
     mut grid: ResMut<Grid>,
+    currency: Res<Currency>,
+    mut writer: EventWriter<UpdateCurrencyEvent>,
 ) {
     let Ok((mut transform, shop_item, sprite)) = transforms.get_mut(trigger.entity()) else {
         return;
     };
     transform.translation.z = 0.;
 
+    if currency.value < shop_item.price as i32 {
+        transform.translation = shop_item.pos.extend(0.); // snap back
+        return;
+    }
+
     let Some(pos) = grid.world_to_grid(transform.translation.truncate()) else {
-        transform.translation = shop_item.pos.extend(0.);
+        transform.translation = shop_item.pos.extend(0.); // snap back
         return;
     };
 
@@ -54,4 +64,6 @@ pub fn drop_item(
     shop_item.item_type.add_component(&mut obj);
 
     transform.translation = shop_item.pos.extend(0.);
+
+    writer.send(UpdateCurrencyEvent(-1 * shop_item.price as i32));
 }
