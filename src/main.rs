@@ -5,12 +5,14 @@ use camera::CameraPlugin;
 use game::GamePlugin;
 use grid::GridPlugin;
 use items::ItemsPlugin;
+use main_menu::MainMenuPlugin;
 use shop::ShopPlugin;
 
 pub mod camera;
 pub mod game;
 pub mod grid;
 pub mod items;
+pub mod main_menu;
 pub mod shop;
 
 fn main() {
@@ -23,6 +25,7 @@ fn main() {
             GridPlugin,
             ShopPlugin,
             ItemsPlugin,
+            MainMenuPlugin,
         ))
         .run();
 }
