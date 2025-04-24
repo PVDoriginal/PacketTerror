@@ -29,6 +29,16 @@ impl ItemType {
             _ => 0,
         }
     }
+    fn name(&self) -> String {
+        match self {
+            ItemType::PC => "PC",
+            ItemType::Router => "Router",
+            ItemType::Switch => "Switch",
+            ItemType::Cable => "Cable",
+        }
+        .to_string()
+    }
+
     pub fn add_component(&self, entity_commands: &mut EntityCommands) {
         match self {
             Self::PC => entity_commands.insert(PC),
@@ -61,7 +71,7 @@ pub fn spawn_shop_item(
     let ui_id = commands
         .spawn((
             ShopUI,
-            Text::new(format!("{}, ${}", stringify!(item_type), item_type.price())),
+            Text::new(format!("{}, ${}", item_type.name(), item_type.price())),
             TextFont {
                 font_size: 14.0,
                 ..Default::default()
@@ -79,7 +89,7 @@ pub fn spawn_shop_item(
             ShopRefID(ui_id),
             Sprite::from_image(asset_server.load(item_type.sprite_path())),
             Transform::from_translation(pos.extend(0.)),
-            Name::new(stringify!(item_type)),
+            Name::new(item_type.name()),
         ))
         .id()
 }
