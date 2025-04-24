@@ -4,6 +4,7 @@ use crate::grid::GRID_M;
 use crate::grid::GRID_N;
 
 pub const SCALE: f32 = 0.5;
+pub const SPRITE_SIZE: f32 = 21.;
 
 #[derive(Resource, Default)]
 pub struct Screen {
@@ -29,8 +30,8 @@ pub fn init_camera(mut commands: Commands) {
         },
         Msaa::Off,
         Transform::from_translation(vec3(
-            GRID_N as f32 / 2. * 21. - 10.5,
-            GRID_M as f32 / 2. * 21. - 72.3 / 2.,
+            GRID_N as f32 / 2. * SPRITE_SIZE - SPRITE_SIZE / 2.,
+            GRID_M as f32 / 2. * SPRITE_SIZE - 34., // subtracted value is arbitrary so it looks good
             10.,
         )),
     ));

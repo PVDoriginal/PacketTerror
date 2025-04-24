@@ -1,9 +1,8 @@
 use bevy::{math::vec3, prelude::*};
 
 use crate::{
-    camera::SCALE,
-    shop::currency::{Currency, UpdateCurrencyEvent},
-    shop::shop_items::ShopItem,
+    camera::{SCALE, SPRITE_SIZE},
+    shop::{currency::{Currency, UpdateCurrencyEvent}, shop_items::ShopItem},
 };
 
 use super::Grid;
@@ -59,7 +58,7 @@ pub fn drop_item(
 
     let mut obj = commands.spawn((
         sprite.clone(),
-        Transform::from_translation(pos.extend(0).as_vec3() * 21.),
+        Transform::from_translation(pos.extend(0).as_vec3() * SPRITE_SIZE),
     ));
     grid.grid[pos.x as usize][pos.y as usize] = Some(obj.id());
     shop_item.item_type.add_component(&mut obj);

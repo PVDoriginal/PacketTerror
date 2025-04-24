@@ -2,16 +2,10 @@ pub mod currency;
 pub mod shop_items;
 use currency::*;
 
-use bevy::{
-    math::{vec2, vec3},
-    prelude::*,
-};
+use bevy::{math::vec2, prelude::*};
 use shop_items::{ItemType, ShopItem, ShopRefID, ShopUI, spawn_shop_item};
 
-use crate::{
-    camera::init_camera,
-    items::{Cable, PC, Router, Switch},
-};
+use crate::camera::{init_camera, SPRITE_SIZE};
 
 pub struct ShopPlugin;
 
@@ -65,7 +59,7 @@ fn move_shop_ui(
             continue;
         };
 
-        node.top = Val::Px(pos.y + 21. / 2.);
+        node.top = Val::Px(pos.y + SPRITE_SIZE / 2.);
         node.left = Val::Px(pos.x - c_node.size().x / 2.);
     }
 }

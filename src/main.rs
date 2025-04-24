@@ -5,7 +5,6 @@ use camera::CameraPlugin;
 use game::GamePlugin;
 use grid::GridPlugin;
 use items::ItemsPlugin;
-use main_menu::MainMenuPlugin;
 use shop::ShopPlugin;
 
 pub mod camera;
