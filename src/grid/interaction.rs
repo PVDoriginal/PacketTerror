@@ -2,7 +2,8 @@ use bevy::{math::vec3, prelude::*};
 
 use crate::{
     camera::SCALE,
-    shop::{Currency, ShopItem, UpdateCurrencyEvent},
+    shop::ShopItem,
+    shop::currency::{Currency, UpdateCurrencyEvent},
 };
 
 use super::Grid;

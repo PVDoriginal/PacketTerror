@@ -2,6 +2,7 @@ use bevy::{math::vec3, prelude::*};
 
 use crate::grid::GRID_M;
 use crate::grid::GRID_N;
+use crate::shop::ShopItem;
 
 pub const SCALE: f32 = 0.5;
 
@@ -15,7 +16,6 @@ pub struct CameraPlugin;
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, init_camera);
-
         app.init_resource::<Screen>();
         app.add_systems(Update, update_screen);
     }

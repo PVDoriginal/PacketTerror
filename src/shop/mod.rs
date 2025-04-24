@@ -1,55 +1,12 @@
+pub mod currency;
+use currency::*;
+
 use bevy::{math::vec3, prelude::*};
 
 use crate::{
     camera::init_camera,
     items::{Cable, PC, Router, Switch},
 };
-
-#[derive(Resource)]
-pub struct Currency {
-    pub value: i32,
-}
-#[derive(Component)]
-pub struct CurrencyDisplay;
-
-#[derive(Event)]
-pub struct UpdateCurrencyEvent(pub i32);
-
-pub fn init_currency(mut commands: Commands, currency: Res<Currency>) {
-    // Note: text without textBundle seems to float to screen top-left
-    commands.spawn((
-        CurrencyDisplay,
-        Text::new(format!("Packet credits: {}", currency.value)),
-        TextFont {
-            font_size: 14.0,
-            ..Default::default()
-        },
-    ));
-}
-pub struct CurrencyPlugin;
-impl Plugin for CurrencyPlugin {
-    fn build(&self, app: &mut App) {
-        app.insert_resource(Currency { value: 300 });
-        app.add_systems(Startup, init_currency);
-        app.add_systems(Update, update_currency);
-    }
-}
-pub fn update_currency(
-    mut currency: ResMut<Currency>,
-    mut event_update: EventReader<UpdateCurrencyEvent>,
-    mut display_currency: Query<&mut Text, With<CurrencyDisplay>>,
-) {
-    for ev in event_update.read() {
-        if currency.value + ev.0 >= 0 {
-            currency.value += ev.0;
-        }
-    }
-
-    let Ok(mut text) = display_currency.get_single_mut() else {
-        return;
-    };
-    text.0 = format!("Packet credits: {}", currency.value);
-}
 
 pub struct ShopPlugin;
 
@@ -79,6 +36,12 @@ pub enum ItemType {
 #[derive(Component)]
 pub struct CableFromShop;
 
+#[derive(Component)]
+pub struct ShopUI;
+
+#[derive(Component)]
+pub struct ShopRefID(Entity);
+
 impl ItemType {
     pub fn add_component(&self, entity_commands: &mut EntityCommands) {
         match self {
@@ -94,6 +57,7 @@ impl Plugin for ShopPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(CurrencyPlugin);
         app.add_systems(Startup, init_shop_items.after(init_camera));
+        app.add_systems(Update, move_shop_ui);
         app.add_event::<UpdateCurrencyEvent>();
     }
 }
@@ -108,15 +72,38 @@ pub fn init_shop_items(
     };
 
     let pos = vec3(camera_x - 50., -30., 0.);
+    let router_id = commands
+        .spawn((
+            ShopUI,
+            Text::new("Router, $15"),
+            TextFont {
+                font_size: 14.0,
+                ..Default::default()
+            },
+        ))
+        .id();
+
     commands.spawn((
+        ShopRefID(router_id),
         ShopItem::new(ItemType::Router, pos.truncate(), 15),
         Sprite::from_image(asset_server.load("router.png")),
         Transform::from_translation(pos),
         Name::new("Router"),
     ));
 
+    let switch_id = commands
+        .spawn((
+            ShopUI,
+            Text::new("Switch, $10"),
+            TextFont {
+                font_size: 14.0,
+                ..Default::default()
+            },
+        ))
+        .id();
     let pos = vec3(camera_x - 25., -30., 0.);
     commands.spawn((
+        ShopRefID(switch_id),
         ShopItem::new(ItemType::Switch, pos.truncate(), 10),
         Sprite::from_image(asset_server.load("switch.png")),
         Transform::from_translation(pos),
@@ -131,12 +118,43 @@ pub fn init_shop_items(
         Name::new("PC"),
     ));
 
+    let cable_id = commands
+        .spawn((
+            ShopUI,
+            Text::new("Cable, $1"),
+            TextFont {
+                font_size: 14.0,
+                ..Default::default()
+            },
+        ))
+        .id();
     let pos = vec3(camera_x + 25., -30., 0.);
     commands.spawn((
         CableFromShop,
-        ShopItem::new(ItemType::Cable, pos.truncate(), 15),
+        ShopRefID(cable_id),
+        ShopItem::new(ItemType::Cable, pos.truncate(), 1),
         Sprite::from_image(asset_server.load("cable.png")),
         Transform::from_translation(pos),
         Name::new("Cable"),
     ));
+}
+
+fn move_shop_ui(
+    positions: Query<(&Transform, &ShopRefID), With<ShopItem>>,
+    cameras: Query<(&GlobalTransform, &Camera)>,
+    mut shop_ui: Query<(&mut Node, &ComputedNode), With<ShopUI>>,
+) {
+    let (camera_transform, camera) = cameras.single();
+    for (position, ui_id) in &positions {
+        let pos = camera
+            .world_to_viewport(camera_transform, position.translation)
+            .expect("camera panik");
+
+        let Ok((mut node, c_node)) = shop_ui.get_mut(ui_id.0) else {
+            continue;
+        };
+
+        node.top = Val::Px(pos.y + 21. / 2.);
+        node.left = Val::Px(pos.x - c_node.size().x / 2.);
+    }
 }
