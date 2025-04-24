@@ -2,10 +2,12 @@ use bevy::{
     math::{uvec2, vec3},
     prelude::*,
 };
+use cable_interactions::CableInteractionPlugin;
 use interaction::InteractionPlugin;
 
 use crate::camera::SPRITE_SIZE;
 
+pub mod cable_interactions;
 pub mod interaction;
 
 pub const GRID_N: usize = 30;
@@ -68,7 +70,7 @@ pub struct GridPlugin;
 
 impl Plugin for GridPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(InteractionPlugin);
+        app.add_plugins((InteractionPlugin, CableInteractionPlugin));
         app.add_systems(Startup, init_grid);
         app.init_resource::<Grid>();
     }

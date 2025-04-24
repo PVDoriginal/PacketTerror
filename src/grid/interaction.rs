@@ -2,14 +2,13 @@ use bevy::{math::vec3, prelude::*};
 
 use crate::{
     camera::{SCALE, SPRITE_SIZE},
-    items::{PC, Router, Switch},
     shop::{
         currency::{Currency, UpdateCurrencyEvent},
         shop_items::{ItemType, ShopItem},
     },
 };
 
-use super::Grid;
+use super::{Grid, cable_interactions::drop_cable};
 
 pub struct InteractionPlugin;
 
@@ -80,7 +79,7 @@ pub fn drop_item(
     transform.translation = shop_item.pos.extend(0.);
 }
 
-fn can_place_item(
+pub fn can_place_item(
     transform: &Mut<Transform>,
     shop_item: &ShopItem,
     grid: &ResMut<Grid>,
@@ -90,39 +89,4 @@ fn can_place_item(
         return false;
     }
     grid.inside_grid(transform.translation.truncate())
-}
-
-pub fn drop_cable(
-    trigger: Trigger<Pointer<DragEnd>>,
-    mut transforms: Query<(&mut Transform, &ShopItem)>,
-    mut grid_vals: Query<Entity, Or<(With<PC>, With<Switch>, With<Router>)>>,
-    grid: ResMut<Grid>,
-    currency: Res<Currency>,
-) {
-    let Ok((mut transform, shop_item)) = transforms.get_mut(trigger.entity()) else {
-        return;
-    };
-    transform.translation.z = 0.;
-    if can_place_item(&transform, &shop_item, &grid, &currency)
-        && cable_can_connect(&transform, &grid, &mut grid_vals)
-    {
-        info!("yep!");
-    }
-
-    // snap back:
-    transform.translation = shop_item.pos.extend(0.);
-}
-
-fn cable_can_connect(
-    transform: &Mut<Transform>,
-    grid: &ResMut<Grid>,
-    grid_vals: &mut Query<Entity, Or<(With<PC>, With<Switch>, With<Router>)>>,
-) -> bool {
-    let Some(entity) = grid.get_element(transform.translation.truncate()) else {
-        return false;
-    };
-    let Ok(_) = grid_vals.get_mut(entity) else {
-        return false;
-    };
-    true
 }
