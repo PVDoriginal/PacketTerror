@@ -2,7 +2,6 @@ use bevy::{math::vec3, prelude::*};
 
 use crate::grid::GRID_M;
 use crate::grid::GRID_N;
-use crate::shop::ShopItem;
 
 pub const SCALE: f32 = 0.5;
 
