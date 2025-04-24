@@ -25,7 +25,7 @@ fn main() {
             GridPlugin,
             ShopPlugin,
             ItemsPlugin,
-            MainMenuPlugin,
+            //MainMenuPlugin,
         ))
         .run();
 }

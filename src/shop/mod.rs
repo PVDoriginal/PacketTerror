@@ -40,8 +40,11 @@ pub fn init_shop_items(
         ItemType::Cable,
     ];
 
+    const ITEM_SPACE: usize = 50;
+    let n = shop_items.len();
+
     for (index, item) in shop_items.iter().enumerate() {
-        let x: f32 = camera_x + index as f32 / shop_items.len() as f32 * 100. - 50.;
+        let x: f32 = camera_x + index as f32 * ITEM_SPACE as f32 - (ITEM_SPACE * n) as f32 / 2.;
         spawn_shop_item(&mut commands, &asset_server, *item, vec2(x, -30.));
     }
 }
