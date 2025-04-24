@@ -9,6 +9,9 @@ pub struct Router;
 #[derive(Component)]
 pub struct Switch;
 
+#[derive(Component)]
+pub struct Cable;
+
 pub struct ItemsPlugin;
 
 impl Plugin for ItemsPlugin {

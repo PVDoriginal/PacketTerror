@@ -2,7 +2,7 @@ use bevy::{math::vec3, prelude::*};
 
 use crate::{
     camera::init_camera,
-    items::{PC, Router, Switch},
+    items::{Cable, PC, Router, Switch},
 };
 
 #[derive(Resource)]
@@ -29,7 +29,7 @@ pub fn init_currency(mut commands: Commands, currency: Res<Currency>) {
 pub struct CurrencyPlugin;
 impl Plugin for CurrencyPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(Currency { value: 30 });
+        app.insert_resource(Currency { value: 300 });
         app.add_systems(Startup, init_currency);
         app.add_systems(Update, update_currency);
     }
@@ -68,11 +68,16 @@ impl ShopItem {
         }
     }
 }
+
 pub enum ItemType {
     PC,
     Router,
     Switch,
+    Cable,
 }
+
+#[derive(Component)]
+pub struct CableFromShop;
 
 impl ItemType {
     pub fn add_component(&self, entity_commands: &mut EntityCommands) {
@@ -80,6 +85,7 @@ impl ItemType {
             Self::PC => entity_commands.insert(PC),
             Self::Router => entity_commands.insert(Router),
             Self::Switch => entity_commands.insert(Switch),
+            Self::Cable => entity_commands.insert(Cable),
         };
     }
 }
@@ -100,8 +106,8 @@ pub fn init_shop_items(
     let Ok(camera_x) = camera.get_single().map(|x| x.translation.x) else {
         return;
     };
-    let pos = vec3(camera_x, -30., 0.);
 
+    let pos = vec3(camera_x - 50., -30., 0.);
     commands.spawn((
         ShopItem::new(ItemType::Router, pos.truncate(), 15),
         Sprite::from_image(asset_server.load("router.png")),
@@ -109,7 +115,7 @@ pub fn init_shop_items(
         Name::new("Router"),
     ));
 
-    let pos = vec3(camera_x - 30., -30., 0.);
+    let pos = vec3(camera_x - 25., -30., 0.);
     commands.spawn((
         ShopItem::new(ItemType::Switch, pos.truncate(), 10),
         Sprite::from_image(asset_server.load("switch.png")),
@@ -117,11 +123,20 @@ pub fn init_shop_items(
         Name::new("Switch"),
     ));
 
-    let pos = vec3(camera_x + 30., -30., 0.);
+    let pos = vec3(camera_x + 0., -30., 0.);
     commands.spawn((
         ShopItem::new(ItemType::PC, pos.truncate(), 100),
         Sprite::from_image(asset_server.load("pc.png")),
         Transform::from_translation(pos),
         Name::new("PC"),
+    ));
+
+    let pos = vec3(camera_x + 25., -30., 0.);
+    commands.spawn((
+        CableFromShop,
+        ShopItem::new(ItemType::Cable, pos.truncate(), 15),
+        Sprite::from_image(asset_server.load("cable.png")),
+        Transform::from_translation(pos),
+        Name::new("Cable"),
     ));
 }

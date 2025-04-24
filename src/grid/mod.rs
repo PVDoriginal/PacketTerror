@@ -14,14 +14,21 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn world_to_grid(&self, mut pos: Vec2) -> Option<UVec2> {
-        pos += 10.5;
+    fn inside_grid(&self, pos: Vec2) -> bool {
         if pos.x >= GRID_N as f32 * 21. || pos.x < 0. {
-            return None;
+            return false;
         }
         if pos.y >= GRID_M as f32 * 21. || pos.y < 0. {
+            return false;
+        }
+        return true;
+    }
+    pub fn world_to_grid(&self, mut pos: Vec2) -> Option<UVec2> {
+        pos += 10.5;
+        if !self.inside_grid(pos) {
             return None;
         }
+
         let pos = uvec2((pos.x / 21.) as u32, (pos.y / 21.) as u32);
         if self.grid[pos.x as usize][pos.y as usize].is_none() {
             return Some(pos);
