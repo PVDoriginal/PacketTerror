@@ -111,68 +111,91 @@ pub fn click_cable(
     let pos1 = grid.world_to_grid(cable.0).unwrap();
     let pos2 = grid.world_to_grid(pos).unwrap();
 
-    info!("positions!{} -> {}", pos1, pos2);
-
-    if pos1.x == pos2.x && pos1 != pos2 {
-        let mn_pos = pos1.y.min(pos2.y) as usize;
-        let mx_pos = pos1.y.max(pos2.y) as usize;
-
-        let cable_cnt = (mx_pos - mn_pos - 1) as i32;
-        if currency.value < cable_cnt {
-            return;
-        }
-
-        let cable_parent = commands.spawn((Cable, Name::new("Cable parent"))).id();
-
-        for j in mn_pos + 1..mx_pos {
-            grid.grid[pos1.x as usize][j as usize] = Some(cable_parent);
-
-            commands.spawn((
-                Sprite::from_image(asset_server.load("cable.png")),
-                Transform::from_translation(vec3(
-                    pos1.x as f32 * SPRITE_SIZE,
-                    j as f32 * SPRITE_SIZE,
-                    1.,
-                ))
-                .with_rotation(Quat::from_rotation_z(PI / 2.)),
-                Name::new("CableChild"),
-            ));
-        }
-        writer.send(UpdateCurrencyEvent(-1 * cable_cnt));
+    if pos1.x != pos2.x && pos1.y != pos2.y {
+        return;
     }
 
-    if pos1.y == pos2.y && pos1 != pos2 {
-        let mn_pos = pos1.x.min(pos2.x) as usize;
-        let mx_pos = pos1.x.max(pos2.x) as usize;
+    let price = pos1.as_vec2().distance(pos2.as_vec2()) as i32;
 
-        let cable_cnt = (mx_pos - mn_pos - 1) as i32;
-        if currency.value < cable_cnt {
-            return;
+    if currency.value < price {
+        return;
+    }
+
+    spawn_cable(
+        URect::from_corners(pos1, pos2),
+        &mut commands,
+        &asset_server,
+        CableSpawnMode::CutSides,
+        Some(&mut grid),
+    );
+
+    writer.send(UpdateCurrencyEvent(-1 * price));
+    info!("positions!{} -> {}", pos1, pos2);
+}
+
+#[derive(Eq, PartialEq)]
+pub enum CableSpawnMode {
+    CutSides,
+    Raw,
+}
+
+pub fn spawn_cable(
+    mut rect: URect,
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    mode: CableSpawnMode,
+    grid: Option<&mut Grid>,
+) -> Entity {
+    let cable_parent = commands
+        .spawn((
+            Cable,
+            ItemType::Cable,
+            Name::new("Cable parent"),
+            Transform::default(),
+            Visibility::Visible,
+        ))
+        .id();
+
+    let rotation = if (rect.min.y == rect.max.y) {
+        Quat::IDENTITY
+    } else {
+        Quat::from_rotation_z(PI / 2.)
+    };
+
+    if mode == CableSpawnMode::CutSides {
+        if rect.min.x == rect.max.x {
+            rect.min.y += 1;
+            rect.max.y -= 1;
+        } else if rect.min.y == rect.max.y {
+            rect.min.x += 1;
+            rect.max.x -= 1;
         }
-
-        let cable_parent = commands
-            .spawn((
-                Cable,
-                Name::new("Cable parent"),
-                Transform::default(),
-                Visibility::Visible,
-            ))
-            .id();
-        for i in mn_pos + 1..mx_pos {
-            grid.grid[i][pos1.y as usize] = Some(cable_parent);
-
+    }
+    
+    if let Some(grid) = grid {
+        for x in rect.min.x..rect.max.x + 1 {
+            for y in rect.min.y..rect.max.y + 1 {
+                grid.grid[x as usize][y as usize] = Some(cable_parent);
+            }
+        }
+    }
+    
+    for x in rect.min.x..rect.max.x + 1 {
+        for y in rect.min.y..rect.max.y + 1 {
             commands
                 .spawn((
                     Sprite::from_image(asset_server.load("cable.png")),
                     Transform::from_translation(vec3(
-                        i as f32 * SPRITE_SIZE,
-                        pos1.y as f32 * SPRITE_SIZE,
+                        x as f32 * SPRITE_SIZE,
+                        y as f32 * SPRITE_SIZE,
                         1.,
-                    )),
+                    ))
+                    .with_rotation(rotation),
                     Name::new("Cable child"),
                 ))
                 .set_parent(cable_parent);
         }
-        writer.send(UpdateCurrencyEvent(-1 * cable_cnt));
     }
+
+    cable_parent
 }

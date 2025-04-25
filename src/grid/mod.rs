@@ -43,6 +43,7 @@ impl Grid {
             (pos.y / SPRITE_SIZE) as u32,
         ))
     }
+
     pub fn on_empty_cell(&self, pos: Vec2) -> bool {
         let Some(pos) = self.world_to_grid(pos) else {
             return false;
@@ -54,8 +55,8 @@ impl Grid {
         self.grid[pos.x as usize][pos.y as usize]
     }
 
-    pub fn cable_rect(&self, cable: Entity) -> URect {
-        let mut rect = URect::default();
+    pub fn cable_rect(&self, cable: Entity, pos: UVec2) -> URect {
+        let mut rect = URect::new(pos.x, pos.y, pos.x, pos.y);
 
         for i in 0..GRID_N {
             for j in 0..GRID_M {

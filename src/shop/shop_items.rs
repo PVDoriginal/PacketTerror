@@ -15,7 +15,7 @@ pub enum ItemType {
 }
 
 impl ItemType {
-    fn sprite_path(&self) -> String {
+    pub fn sprite_path(&self) -> String {
         match self {
             ItemType::PC => "pc.png",
             ItemType::EnemyPC => "enemy_pc.png",
@@ -34,7 +34,7 @@ impl ItemType {
             _ => 0,
         }
     }
-    fn name(&self) -> String {
+    pub fn name(&self) -> String {
         match self {
             ItemType::PC => "PC",
             ItemType::EnemyPC => "Enemy PC",
