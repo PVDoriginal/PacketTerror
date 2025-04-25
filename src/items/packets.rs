@@ -5,7 +5,7 @@ use bevy::{math::vec2, prelude::*, time::common_conditions::on_timer};
 
 use crate::game::InGame;
 
-use super::{Cable, CableDirection, Server, Switch};
+use super::{Cable, CableDirection, Router, Server};
 
 const ADJ_SPACE: [Vec2; 4] = [vec2(-1., 0.), vec2(0., -1.), vec2(1., 0.), vec2(0., 1.)];
 
@@ -96,7 +96,7 @@ fn get_adj_cables(
 fn update_packets(
     time: Res<Time>,
     mut packets: Query<(&mut Transform, &Packet, Entity)>,
-    switch: Query<&Switch>,
+    router: Query<&Router>,
     cables: Query<&Cable>,
     grid: ResMut<Grid>,
     mut commands: Commands,
@@ -112,7 +112,7 @@ fn update_packets(
             continue;
         }
 
-        if switch.get(entity).is_ok() {
+        if router.get(entity).is_ok() {
             let cables = get_adj_cables(pos.translation.truncate(), &cables, &grid);
 
             for (cable_pos, adj_space) in cables {
