@@ -1,15 +1,5 @@
-use std::time::Duration;
-
-use crate::{
-    game::GameStates,
-    grid::{self, Grid},
-    items::EnemyPC,
-};
-use bevy::{
-    math::{uvec2, vec2},
-    prelude::*,
-    time::common_conditions::on_timer,
-};
+use crate::{grid::Grid, items::EnemyPC};
+use bevy::{math::vec2, prelude::*};
 
 use super::{Cable, Server};
 
@@ -17,21 +7,16 @@ pub struct PacketPlugin;
 
 impl Plugin for PacketPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            create_packets
-                .run_if(in_state(GameStates::InGame))
-                .run_if(on_timer(Duration::from_secs(3))), /// can I put them in a tuple?
-        );
+        app.add_systems(Update, create_packets);
     }
 }
 
-fn create_packets(
+pub fn create_packets(
     packet_senders: Query<&Transform, Or<(With<EnemyPC>, With<Server>)>>,
     cables: Query<&Cable>,
-    grid: ResMut<Grid>,
+    mut grid: ResMut<Grid>,
     mut commands: Commands,
-    asset_server: &Res<AssetServer>,
+    asset_server: Res<AssetServer>,
 ) {
     for packet_sender in &packet_senders {
         let pos = grid
