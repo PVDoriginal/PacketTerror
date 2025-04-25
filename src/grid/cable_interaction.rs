@@ -1,12 +1,12 @@
 use bevy::{math::vec3, prelude::*};
 use std::f32::consts::PI;
 
-use super::{Grid, interaction::can_place_item};
+use super::{interaction::can_place_item, Grid};
 use crate::items::EnemyPC;
 use crate::shop::shop_items::ShopPosition;
 use crate::{
     camera::SPRITE_SIZE,
-    items::{Cable, PC, Router, Server, Switch},
+    items::{Cable, Router, Server, Switch, PC},
     shop::{
         currency::{Currency, UpdateCurrencyEvent},
         shop_items::ItemType,
@@ -152,7 +152,7 @@ pub fn click_cable(
         &mut commands,
         &asset_server,
         CableSpawnMode::CutSides,
-        Some(&mut grid),
+        &mut grid,
     );
 
     writer.send(UpdateCurrencyEvent(-1 * price));
@@ -169,7 +169,7 @@ pub fn spawn_cable(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     mode: CableSpawnMode,
-    grid: Option<&mut Grid>,
+    grid: &mut Grid,
 ) -> Option<Entity> {
     if mode == CableSpawnMode::CutSides {
         if rect.min.x == rect.max.x {
@@ -180,10 +180,6 @@ pub fn spawn_cable(
             rect.max.x -= 1;
         }
     }
-
-    let Some(grid) = grid else {
-        return None;
-    };
 
     for x in rect.min.x..rect.max.x + 1 {
         for y in rect.min.y..rect.max.y + 1 {
