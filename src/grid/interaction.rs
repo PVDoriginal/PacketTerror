@@ -8,7 +8,7 @@ use crate::{
     },
 };
 
-use super::{Grid, cable_interactions::drop_cable};
+use super::{Grid, cable_interaction::drop_cable};
 
 pub struct InteractionPlugin;
 

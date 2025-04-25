@@ -5,15 +5,15 @@ use currency::*;
 use bevy::{math::vec2, prelude::*};
 use shop_items::{ItemType, ShopItem, ShopRefID, ShopUI, spawn_shop_item};
 
-use crate::camera::{init_camera, SPRITE_SIZE};
+use crate::{camera::SPRITE_SIZE, game::GameStates};
 
 pub struct ShopPlugin;
 
 impl Plugin for ShopPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(CurrencyPlugin);
-        app.add_systems(Startup, init_shop_items.after(init_camera));
-        app.add_systems(Update, move_shop_ui);
+        app.add_systems(OnEnter(GameStates::InGame), init_shop_items);
+        app.add_systems(Update, move_shop_ui.run_if(in_state(GameStates::InGame)));
         app.add_event::<UpdateCurrencyEvent>();
     }
 }
@@ -30,8 +30,10 @@ pub fn init_shop_items(
     let shop_items = vec![
         ItemType::Router,
         ItemType::Switch,
-        ItemType::PC,
         ItemType::Cable,
+        // for internal purposes
+        ItemType::PC,
+        ItemType::EnemyPC,
     ];
 
     const ITEM_SPACE: usize = 50;

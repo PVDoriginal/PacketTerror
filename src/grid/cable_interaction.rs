@@ -150,19 +150,28 @@ pub fn click_cable(
             return;
         }
 
-        let cable_parent = commands.spawn((Cable, Name::new("Cable parent"))).id();
+        let cable_parent = commands
+            .spawn((
+                Cable,
+                Name::new("Cable parent"),
+                Transform::default(),
+                Visibility::Visible,
+            ))
+            .id();
         for i in mn_pos + 1..mx_pos {
             grid.grid[i][pos1.y as usize] = Some(cable_parent);
 
-            commands.spawn((
-                Sprite::from_image(asset_server.load("cable.png")),
-                Transform::from_translation(vec3(
-                    i as f32 * SPRITE_SIZE,
-                    pos1.y as f32 * SPRITE_SIZE,
-                    1.,
-                )),
-                Name::new("Cable child"),
-            ));
+            commands
+                .spawn((
+                    Sprite::from_image(asset_server.load("cable.png")),
+                    Transform::from_translation(vec3(
+                        i as f32 * SPRITE_SIZE,
+                        pos1.y as f32 * SPRITE_SIZE,
+                        1.,
+                    )),
+                    Name::new("Cable child"),
+                ))
+                .set_parent(cable_parent);
         }
         writer.send(UpdateCurrencyEvent(-1 * cable_cnt));
     }

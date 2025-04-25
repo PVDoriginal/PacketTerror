@@ -1,10 +1,14 @@
 use bevy::prelude::*;
 
-use crate::items::{Cable, PC, Router, Switch};
+use crate::{
+    game::InGame,
+    items::{Cable, EnemyPC, PC, Router, Switch},
+};
 
 #[derive(Clone, Copy)]
 pub enum ItemType {
     PC,
+    EnemyPC,
     Router,
     Switch,
     Cable,
@@ -14,6 +18,7 @@ impl ItemType {
     fn sprite_path(&self) -> String {
         match self {
             ItemType::PC => "pc.png",
+            ItemType::EnemyPC => "enemy_pc.png",
             ItemType::Router => "router.png",
             ItemType::Switch => "switch.png",
             ItemType::Cable => "cable.png",
@@ -32,6 +37,7 @@ impl ItemType {
     fn name(&self) -> String {
         match self {
             ItemType::PC => "PC",
+            ItemType::EnemyPC => "Enemy PC",
             ItemType::Router => "Router",
             ItemType::Switch => "Switch",
             ItemType::Cable => "Cable",
@@ -42,6 +48,7 @@ impl ItemType {
     pub fn add_component(&self, entity_commands: &mut EntityCommands) {
         match self {
             Self::PC => entity_commands.insert(PC),
+            Self::EnemyPC => entity_commands.insert(EnemyPC),
             Self::Router => entity_commands.insert(Router),
             Self::Switch => entity_commands.insert(Switch),
             Self::Cable => entity_commands.insert(Cable),
@@ -50,12 +57,14 @@ impl ItemType {
 }
 
 #[derive(Component)]
+#[require(InGame)]
 pub struct ShopUI;
 
 #[derive(Component)]
 pub struct ShopRefID(pub Entity);
 
 #[derive(Component)]
+#[require(InGame)]
 pub struct ShopItem {
     pub pos: Vec2,
     pub item_type: ItemType,

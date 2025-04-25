@@ -1,17 +1,28 @@
 use bevy::prelude::*;
 
+use crate::game::{GameStates, InGame};
+
 #[derive(Resource)]
 pub struct Currency {
     pub value: i32,
 }
 #[derive(Component)]
+#[require(InGame)]
 pub struct CurrencyDisplay;
 
 #[derive(Event)]
 pub struct UpdateCurrencyEvent(pub i32);
 
+pub struct CurrencyPlugin;
+impl Plugin for CurrencyPlugin {
+    fn build(&self, app: &mut App) {
+        app.insert_resource(Currency { value: 300 });
+        app.add_systems(OnEnter(GameStates::InGame), init_currency);
+        app.add_systems(Update, update_currency.run_if(in_state(GameStates::InGame)));
+    }
+}
+
 pub fn init_currency(mut commands: Commands, currency: Res<Currency>) {
-    // Note: text without textBundle seems to float to screen top-left
     commands.spawn((
         CurrencyDisplay,
         Text::new(format!("Packet credits: {}", currency.value)),
@@ -21,14 +32,7 @@ pub fn init_currency(mut commands: Commands, currency: Res<Currency>) {
         },
     ));
 }
-pub struct CurrencyPlugin;
-impl Plugin for CurrencyPlugin {
-    fn build(&self, app: &mut App) {
-        app.insert_resource(Currency { value: 300 });
-        app.add_systems(Startup, init_currency);
-        app.add_systems(Update, update_currency);
-    }
-}
+
 pub fn update_currency(
     mut currency: ResMut<Currency>,
     mut event_update: EventReader<UpdateCurrencyEvent>,

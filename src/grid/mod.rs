@@ -2,12 +2,15 @@ use bevy::{
     math::{uvec2, vec3},
     prelude::*,
 };
-use cable_interactions::CableInteractionPlugin;
+use cable_interaction::CableInteractionPlugin;
 use interaction::InteractionPlugin;
 
-use crate::camera::SPRITE_SIZE;
+use crate::{
+    camera::SPRITE_SIZE,
+    game::{GameStates, InGame},
+};
 
-pub mod cable_interactions;
+pub mod cable_interaction;
 pub mod interaction;
 
 pub const GRID_N: usize = 30;
@@ -50,28 +53,43 @@ impl Grid {
     }
 }
 
-pub fn init_grid(mut commands: Commands, asset_server: Res<AssetServer>) {
-    for i in 0..GRID_N {
-        for j in 0..GRID_M {
-            commands.spawn((
-                Sprite::from_image(asset_server.load("grid_cell.png")),
-                Transform::from_translation(vec3(
-                    i as f32 * SPRITE_SIZE,
-                    j as f32 * SPRITE_SIZE,
-                    -1.,
-                )),
-                Name::new("Grid_block"),
-            ));
-        }
-    }
-}
+#[derive(Component)]
+#[require(InGame)]
+pub struct GridRoot;
 
 pub struct GridPlugin;
 
 impl Plugin for GridPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((InteractionPlugin, CableInteractionPlugin));
-        app.add_systems(Startup, init_grid);
+        app.add_systems(OnEnter(GameStates::InGame), init_grid);
         app.init_resource::<Grid>();
+    }
+}
+
+pub fn init_grid(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let grid = commands
+        .spawn((
+            Name::new("Grid"),
+            GridRoot,
+            Transform::default(),
+            Visibility::Visible,
+        ))
+        .id();
+
+    for i in 0..GRID_N {
+        for j in 0..GRID_M {
+            commands
+                .spawn((
+                    Sprite::from_image(asset_server.load("grid_cell.png")),
+                    Transform::from_translation(vec3(
+                        i as f32 * SPRITE_SIZE,
+                        j as f32 * SPRITE_SIZE,
+                        -1.,
+                    )),
+                    Name::new("Grid Cell"),
+                ))
+                .set_parent(grid);
+        }
     }
 }
