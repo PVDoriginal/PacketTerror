@@ -59,6 +59,7 @@ pub fn update_health(
 }
 
 pub fn damage_test(
+    // gonna be deleted soon
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut update_health_writer: EventWriter<UpdateHealthEvent>,
 ) {
