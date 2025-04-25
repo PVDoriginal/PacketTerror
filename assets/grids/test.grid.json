@@ -1,1 +1,1 @@
-{"items":[{"Router":[12,3]},{"Switch":[12,7]},{"Router":[17,2]},{"Router":[17,5]},{"Switch":[19,5]},{"Cable":{"min":[20,5],"max":[23,5]}},{"Switch":[21,2]},{"PC":[24,5]}]}
+{"items":[{"Switch":[11,2]},{"Cable":[{"min":[11,3],"max":[11,4]},"Vertical"]},{"Router":[11,5]},{"Cable":[{"min":[12,2],"max":[16,2]},"Horizontal"]},{"Router":[17,2]},{"Cable":[{"min":[17,3],"max":[17,3]},"Vertical"]},{"Switch":[17,4]}]}

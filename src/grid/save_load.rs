@@ -3,6 +3,7 @@ use crate::game::{BuildStates, GameStates};
 use crate::grid::cable_interaction::{spawn_cable, CableSpawnMode};
 use crate::grid::save_load::GridItem::{Cable, EnemyPC, Router, Switch, PC};
 use crate::grid::{Grid, GRID_M, GRID_N};
+use crate::items::CableDirection;
 use crate::shop::shop_items::ItemType;
 use bevy::math::uvec2;
 use bevy::prelude::*;
@@ -26,7 +27,7 @@ pub enum GridItem {
     EnemyPC(UVec2),
     Router(UVec2),
     Switch(UVec2),
-    Cable(URect),
+    Cable(URect, CableDirection),
 }
 
 impl GridItem {
@@ -36,7 +37,7 @@ impl GridItem {
             ItemType::EnemyPC => EnemyPC(uvec2(i, j)),
             ItemType::Router => Router(uvec2(i, j)),
             ItemType::Switch => Switch(uvec2(i, j)),
-            ItemType::Cable => Cable(grid.cable_rect(entity, uvec2(i, j))),
+            ItemType::Cable(dir) => Cable(grid.cable_rect(entity, uvec2(i, j)), *dir),
         }
     }
 }
@@ -48,7 +49,7 @@ impl Into<ItemType> for GridItem {
             GridItem::EnemyPC(_) => ItemType::EnemyPC,
             GridItem::Router(_) => ItemType::Router,
             GridItem::Switch(_) => ItemType::Switch,
-            GridItem::Cable(_) => ItemType::Cable,
+            GridItem::Cable(_, dir) => ItemType::Cable(dir),
         }
     }
 }
@@ -108,13 +109,14 @@ fn populate_grid(
 
     for grid_item in grid_state.items {
         match grid_item {
-            GridItem::Cable(rect) => {
+            GridItem::Cable(rect, dir) => {
                 spawn_cable(
                     rect,
                     &mut commands,
                     &asset_server,
                     CableSpawnMode::Raw,
                     &mut grid,
+                    dir,
                 );
             }
             GridItem::PC(pos) => {

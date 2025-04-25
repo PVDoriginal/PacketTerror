@@ -7,6 +7,7 @@ use shop_items::{spawn_shop_item, ItemType, ShopRefID, ShopUI};
 
 use crate::shop::shop_items::ShopPosition;
 use crate::{camera::SPRITE_SIZE, game::GameStates};
+use crate::items::CableDirection;
 
 pub struct ShopPlugin;
 
@@ -31,7 +32,7 @@ pub fn init_shop_items(
     let shop_items = vec![
         ItemType::Router,
         ItemType::Switch,
-        ItemType::Cable,
+        ItemType::Cable(CableDirection::Horizontal),
         // for internal purposes
         ItemType::PC,
         ItemType::EnemyPC,

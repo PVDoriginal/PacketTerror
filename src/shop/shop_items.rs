@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::items::CableDirection;
 use crate::{
     game::InGame,
     items::{Cable, EnemyPC, Router, Switch, PC},
@@ -11,7 +12,7 @@ pub enum ItemType {
     EnemyPC,
     Router,
     Switch,
-    Cable,
+    Cable(CableDirection),
 }
 
 impl ItemType {
@@ -21,7 +22,7 @@ impl ItemType {
             ItemType::EnemyPC => "enemy_pc.png",
             ItemType::Router => "router.png",
             ItemType::Switch => "switch.png",
-            ItemType::Cable => "cable.png",
+            ItemType::Cable(_) => "cable.png",
         }
         .to_string()
     }
@@ -29,7 +30,7 @@ impl ItemType {
         match self {
             ItemType::Router => 15,
             ItemType::Switch => 10,
-            ItemType::Cable => 1,
+            ItemType::Cable(_) => 1,
 
             _ => 0,
         }
@@ -40,7 +41,7 @@ impl ItemType {
             ItemType::EnemyPC => "Enemy PC",
             ItemType::Router => "Router",
             ItemType::Switch => "Switch",
-            ItemType::Cable => "Cable",
+            ItemType::Cable(_) => "Cable",
         }
         .to_string()
     }
@@ -51,7 +52,7 @@ impl ItemType {
             Self::EnemyPC => entity_commands.insert(EnemyPC),
             Self::Router => entity_commands.insert(Router),
             Self::Switch => entity_commands.insert(Switch),
-            Self::Cable => entity_commands.insert(Cable),
+            Self::Cable(dir) => entity_commands.insert(Cable { dir: *dir }),
         };
     }
 }

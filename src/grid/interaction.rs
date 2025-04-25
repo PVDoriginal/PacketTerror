@@ -23,7 +23,7 @@ pub fn make_interactable(
 ) {
     for (item, item_type) in &shop_items {
         match item_type {
-            ItemType::Cable => {
+            ItemType::Cable(_) => {
                 commands.entity(item).observe(drag_item).observe(drop_cable);
             }
             _ => {

@@ -2,7 +2,7 @@ use bevy::{math::vec3, prelude::*};
 use std::f32::consts::PI;
 
 use super::{interaction::can_place_item, Grid};
-use crate::items::EnemyPC;
+use crate::items::{CableDirection, EnemyPC};
 use crate::shop::shop_items::ShopPosition;
 use crate::{
     camera::SPRITE_SIZE,
@@ -147,12 +147,21 @@ pub fn click_cable(
         return;
     }
 
+    let rect = URect::from_corners(pos1, pos2);
+
+    let direction = if rect.min.y == rect.max.y {
+        CableDirection::Horizontal
+    } else {
+        CableDirection::Vertical
+    };
+
     spawn_cable(
-        URect::from_corners(pos1, pos2),
+        rect,
         &mut commands,
         &asset_server,
         CableSpawnMode::CutSides,
         &mut grid,
+        direction,
     );
 
     writer.send(UpdateCurrencyEvent(-1 * price));
@@ -170,6 +179,7 @@ pub fn spawn_cable(
     asset_server: &Res<AssetServer>,
     mode: CableSpawnMode,
     grid: &mut Grid,
+    dir: CableDirection,
 ) -> Option<Entity> {
     if mode == CableSpawnMode::CutSides {
         if rect.min.x == rect.max.x {
@@ -191,18 +201,18 @@ pub fn spawn_cable(
 
     let cable_parent = commands
         .spawn((
-            Cable,
-            ItemType::Cable,
+            Cable { dir },
+            ItemType::Cable(dir),
             Name::new("Cable parent"),
             Transform::default(),
             Visibility::Visible,
         ))
+        .insert(Cable { dir })
         .id();
 
-    let rotation = if rect.min.y == rect.max.y {
-        Quat::IDENTITY
-    } else {
-        Quat::from_rotation_z(PI / 2.)
+    let rotation = match dir {
+        CableDirection::Horizontal => Quat::IDENTITY,
+        CableDirection::Vertical => Quat::from_rotation_z(PI / 2.),
     };
 
     for x in rect.min.x..rect.max.x + 1 {

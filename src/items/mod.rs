@@ -26,7 +26,15 @@ pub struct Switch;
 
 #[derive(Component)]
 #[require(InGame)]
-pub struct Cable;
+pub struct Cable {
+    pub dir: CableDirection,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Asset, TypePath, Copy, Clone)]
+pub enum CableDirection {
+    Vertical,
+    Horizontal,
+}
 
 pub struct ItemsPlugin;
 
