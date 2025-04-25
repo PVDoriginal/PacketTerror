@@ -1,11 +1,12 @@
 use bevy::{math::vec3, prelude::*};
 use std::f32::consts::PI;
 
-use super::{interaction::can_place_item, Grid};
+use super::{Grid, interaction::can_place_item};
+use crate::items::EnemyPC;
 use crate::shop::shop_items::ShopPosition;
 use crate::{
     camera::SPRITE_SIZE,
-    items::{Cable, Router, Switch, PC},
+    items::{Cable, PC, Router, Server, Switch},
     shop::{
         currency::{Currency, UpdateCurrencyEvent},
         shop_items::ItemType,
@@ -35,7 +36,16 @@ impl Plugin for CableInteractionPlugin {
 pub fn drop_cable(
     trigger: Trigger<Pointer<DragEnd>>,
     mut transforms: Query<(&mut Transform, &ShopPosition, &ItemType)>,
-    mut grid_vals: Query<Entity, Or<(With<PC>, With<Switch>, With<Router>)>>,
+    mut grid_vals: Query<
+        Entity,
+        Or<(
+            With<PC>,
+            With<Switch>,
+            With<Router>,
+            With<EnemyPC>,
+            With<Server>,
+        )>,
+    >,
     grid: ResMut<Grid>,
     mut cable: ResMut<CableOrigin>,
     currency: Res<Currency>,
@@ -59,7 +69,16 @@ pub fn drop_cable(
 fn cable_can_connect(
     pos: &Vec2,
     grid: &ResMut<Grid>,
-    grid_vals: &mut Query<Entity, Or<(With<PC>, With<Switch>, With<Router>)>>,
+    grid_vals: &mut Query<
+        Entity,
+        Or<(
+            With<PC>,
+            With<Switch>,
+            With<Router>,
+            With<EnemyPC>,
+            With<Server>,
+        )>,
+    >,
 ) -> bool {
     let Some(entity) = grid.get_element(*pos) else {
         return false;
@@ -73,7 +92,16 @@ fn cable_can_connect(
 pub fn click_cable(
     windows: Query<&Window>,
     mouse: Res<ButtonInput<MouseButton>>,
-    mut grid_vals: Query<Entity, Or<(With<PC>, With<Switch>, With<Router>)>>,
+    mut grid_vals: Query<
+        Entity,
+        Or<(
+            With<PC>,
+            With<Switch>,
+            With<Router>,
+            With<EnemyPC>,
+            With<Server>,
+        )>,
+    >,
     mut grid: ResMut<Grid>,
     cameras: Query<(&GlobalTransform, &Camera)>,
     cable: Res<CableOrigin>,
@@ -156,7 +184,7 @@ pub fn spawn_cable(
         ))
         .id();
 
-    let rotation = if (rect.min.y == rect.max.y) {
+    let rotation = if rect.min.y == rect.max.y {
         Quat::IDENTITY
     } else {
         Quat::from_rotation_z(PI / 2.)
@@ -171,7 +199,7 @@ pub fn spawn_cable(
             rect.max.x -= 1;
         }
     }
-    
+
     if let Some(grid) = grid {
         for x in rect.min.x..rect.max.x + 1 {
             for y in rect.min.y..rect.max.y + 1 {
@@ -179,7 +207,7 @@ pub fn spawn_cable(
             }
         }
     }
-    
+
     for x in rect.min.x..rect.max.x + 1 {
         for y in rect.min.y..rect.max.y + 1 {
             commands

@@ -41,7 +41,7 @@ pub fn drag_item(
         return;
     };
     let drag = trigger.event();
-    transform.translation.z = 1.;
+    transform.translation.z = 20.;
     transform.translation += vec3(drag.delta.x * SCALE, drag.delta.y * -SCALE, 0.0);
 }
 

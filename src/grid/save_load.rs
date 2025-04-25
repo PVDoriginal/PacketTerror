@@ -1,10 +1,10 @@
 use crate::camera::SPRITE_SIZE;
 use crate::game::{BuildStates, GameStates};
-use crate::grid::cable_interaction::{spawn_cable, CableSpawnMode};
-use crate::grid::save_load::GridItem::{Cable, EnemyPC, Router, Switch, PC};
-use crate::grid::{Grid, GRID_M, GRID_N};
+use crate::grid::cable_interaction::{CableSpawnMode, spawn_cable};
+use crate::grid::save_load::GridItem::{Cable, EnemyPC, PC, Router, Switch};
+use crate::grid::{GRID_M, GRID_N, Grid};
 use crate::shop::shop_items::ItemType;
-use bevy::math::{uvec2, vec2, vec3};
+use bevy::math::uvec2;
 use bevy::prelude::*;
 use bevy::reflect::erased_serde::__private::serde;
 use bevy::utils::HashSet;
