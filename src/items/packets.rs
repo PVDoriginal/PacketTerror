@@ -33,7 +33,7 @@ impl Plugin for PacketPlugin {
     }
 }
 
-fn create_packets(
+pub fn create_packets(
     packet_senders: Query<&Transform, Or<(With<EnemyPC>, With<Server>)>>,
     cables: Query<&Cable>,
     grid: ResMut<Grid>,

@@ -118,6 +118,8 @@ pub fn click_cable(
         return;
     };
 
+    cable_state.set(CableState::Idle);
+
     let (camera_transform, camera) = cameras.single();
     let pos = camera
         .viewport_to_world(camera_transform, screen_pos)
@@ -131,10 +133,6 @@ pub fn click_cable(
     if !cable_can_connect(&pos, &grid, &mut grid_vals) {
         return;
     }
-
-    info!("can connect!{} -> {}", cable.0, pos);
-
-    cable_state.set(CableState::Idle);
 
     let pos1 = grid.world_to_grid(cable.0).unwrap();
     let pos2 = grid.world_to_grid(pos).unwrap();
@@ -158,7 +156,6 @@ pub fn click_cable(
     );
 
     writer.send(UpdateCurrencyEvent(-1 * price));
-    info!("positions!{} -> {}", pos1, pos2);
 }
 
 #[derive(Eq, PartialEq)]
@@ -173,7 +170,29 @@ pub fn spawn_cable(
     asset_server: &Res<AssetServer>,
     mode: CableSpawnMode,
     grid: Option<&mut Grid>,
-) -> Entity {
+) -> Option<Entity> {
+    if mode == CableSpawnMode::CutSides {
+        if rect.min.x == rect.max.x {
+            rect.min.y += 1;
+            rect.max.y -= 1;
+        } else if rect.min.y == rect.max.y {
+            rect.min.x += 1;
+            rect.max.x -= 1;
+        }
+    }
+
+    let Some(grid) = grid else {
+        return None;
+    };
+
+    for x in rect.min.x..rect.max.x + 1 {
+        for y in rect.min.y..rect.max.y + 1 {
+            if grid.grid[x as usize][y as usize].is_some() {
+                return None; // cannot place over existing entities
+            }
+        }
+    }
+
     let cable_parent = commands
         .spawn((
             Cable,
@@ -190,21 +209,9 @@ pub fn spawn_cable(
         Quat::from_rotation_z(PI / 2.)
     };
 
-    if mode == CableSpawnMode::CutSides {
-        if rect.min.x == rect.max.x {
-            rect.min.y += 1;
-            rect.max.y -= 1;
-        } else if rect.min.y == rect.max.y {
-            rect.min.x += 1;
-            rect.max.x -= 1;
-        }
-    }
-
-    if let Some(grid) = grid {
-        for x in rect.min.x..rect.max.x + 1 {
-            for y in rect.min.y..rect.max.y + 1 {
-                grid.grid[x as usize][y as usize] = Some(cable_parent);
-            }
+    for x in rect.min.x..rect.max.x + 1 {
+        for y in rect.min.y..rect.max.y + 1 {
+            grid.grid[x as usize][y as usize] = Some(cable_parent);
         }
     }
 
@@ -225,5 +232,5 @@ pub fn spawn_cable(
         }
     }
 
-    cable_parent
+    Some(cable_parent)
 }
