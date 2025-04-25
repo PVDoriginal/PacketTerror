@@ -7,6 +7,12 @@ pub enum GameStates {
     InGame,
 }
 
+#[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
+pub enum BuildStates {
+    Release,
+    Internal,
+}
+
 #[derive(Component, Default)]
 pub struct InGame;
 
@@ -15,6 +21,8 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_state(GameStates::Start);
+        app.insert_state(BuildStates::Internal);
+
         app.add_systems(Update, start_state.run_if(in_state(GameStates::Start)));
 
         app.add_systems(OnExit(GameStates::InGame), despawn_game);

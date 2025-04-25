@@ -5,6 +5,7 @@ use bevy::{
 use cable_interaction::CableInteractionPlugin;
 use interaction::InteractionPlugin;
 
+use crate::grid::save_load::SaveLoadPlugin;
 use crate::{
     camera::SPRITE_SIZE,
     game::{GameStates, InGame},
@@ -12,6 +13,7 @@ use crate::{
 
 pub mod cable_interaction;
 pub mod interaction;
+pub mod save_load;
 
 pub const GRID_N: usize = 30;
 pub const GRID_M: usize = 13;
@@ -51,6 +53,26 @@ impl Grid {
         let pos = self.world_to_grid(pos)?;
         self.grid[pos.x as usize][pos.y as usize]
     }
+
+    pub fn cable_rect(&self, cable: Entity) -> URect {
+        let mut rect = URect::default();
+
+        for i in 0..GRID_N {
+            for j in 0..GRID_M {
+                self.grid[i][j].map(|e| {
+                    if e == cable {
+                        rect.min.x = rect.min.x.min(i as u32);
+                        rect.min.y = rect.min.y.min(j as u32);
+
+                        rect.max.x = rect.max.x.max(i as u32);
+                        rect.max.y = rect.max.y.max(j as u32);
+                    }
+                });
+            }
+        }
+
+        rect
+    }
 }
 
 #[derive(Component)]
@@ -61,7 +83,7 @@ pub struct GridPlugin;
 
 impl Plugin for GridPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((InteractionPlugin, CableInteractionPlugin));
+        app.add_plugins((InteractionPlugin, CableInteractionPlugin, SaveLoadPlugin));
         app.add_systems(OnEnter(GameStates::InGame), init_grid);
         app.init_resource::<Grid>();
     }

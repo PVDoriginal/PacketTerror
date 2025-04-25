@@ -2,10 +2,10 @@ use bevy::prelude::*;
 
 use crate::{
     game::InGame,
-    items::{Cable, EnemyPC, PC, Router, Switch},
+    items::{Cable, EnemyPC, Router, Switch, PC},
 };
 
-#[derive(Clone, Copy)]
+#[derive(Component, Clone, Copy)]
 pub enum ItemType {
     PC,
     EnemyPC,
@@ -25,7 +25,7 @@ impl ItemType {
         }
         .to_string()
     }
-    fn price(&self) -> u32 {
+    pub(crate) fn price(&self) -> u32 {
         match self {
             ItemType::Router => 15,
             ItemType::Switch => 10,
@@ -61,15 +61,12 @@ impl ItemType {
 pub struct ShopUI;
 
 #[derive(Component)]
+#[require(InGame)]
 pub struct ShopRefID(pub Entity);
 
 #[derive(Component)]
 #[require(InGame)]
-pub struct ShopItem {
-    pub pos: Vec2,
-    pub item_type: ItemType,
-    pub price: u32,
-}
+pub struct ShopPosition(pub(crate) Vec2);
 
 pub fn spawn_shop_item(
     commands: &mut Commands,
@@ -90,11 +87,8 @@ pub fn spawn_shop_item(
 
     commands
         .spawn((
-            ShopItem {
-                pos,
-                item_type,
-                price: item_type.price(),
-            },
+            ShopPosition(pos),
+            item_type,
             ShopRefID(ui_id),
             Sprite::from_image(asset_server.load(item_type.sprite_path())),
             Transform::from_translation(pos.extend(0.)),

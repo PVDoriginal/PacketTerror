@@ -3,8 +3,9 @@ pub mod shop_items;
 use currency::*;
 
 use bevy::{math::vec2, prelude::*};
-use shop_items::{ItemType, ShopItem, ShopRefID, ShopUI, spawn_shop_item};
+use shop_items::{spawn_shop_item, ItemType, ShopRefID, ShopUI};
 
+use crate::shop::shop_items::ShopPosition;
 use crate::{camera::SPRITE_SIZE, game::GameStates};
 
 pub struct ShopPlugin;
@@ -47,7 +48,7 @@ pub fn init_shop_items(
 
 // maybe move into a generalized UI module?
 fn move_shop_ui(
-    positions: Query<(&Transform, &ShopRefID), With<ShopItem>>,
+    positions: Query<(&Transform, &ShopRefID), With<ShopPosition>>,
     cameras: Query<(&GlobalTransform, &Camera)>,
     mut shop_ui: Query<(&mut Node, &ComputedNode), With<ShopUI>>,
 ) {

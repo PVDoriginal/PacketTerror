@@ -1,16 +1,16 @@
 use bevy::{math::vec3, prelude::*};
 use std::f32::consts::PI;
 
+use super::{interaction::can_place_item, Grid};
+use crate::shop::shop_items::ShopPosition;
 use crate::{
     camera::SPRITE_SIZE,
-    items::{Cable, PC, Router, Switch},
+    items::{Cable, Router, Switch, PC},
     shop::{
         currency::{Currency, UpdateCurrencyEvent},
-        shop_items::ShopItem,
+        shop_items::ItemType,
     },
 };
-
-use super::{Grid, interaction::can_place_item};
 
 #[derive(States, Debug, Default, Hash, Clone, Copy, Eq, PartialEq)]
 pub enum CableState {
@@ -34,18 +34,18 @@ impl Plugin for CableInteractionPlugin {
 
 pub fn drop_cable(
     trigger: Trigger<Pointer<DragEnd>>,
-    mut transforms: Query<(&mut Transform, &ShopItem)>,
+    mut transforms: Query<(&mut Transform, &ShopPosition, &ItemType)>,
     mut grid_vals: Query<Entity, Or<(With<PC>, With<Switch>, With<Router>)>>,
     grid: ResMut<Grid>,
     mut cable: ResMut<CableOrigin>,
     currency: Res<Currency>,
     mut cable_state: ResMut<NextState<CableState>>,
 ) {
-    let Ok((mut transform, shop_item)) = transforms.get_mut(trigger.entity()) else {
+    let Ok((mut transform, shop_pos, item_type)) = transforms.get_mut(trigger.entity()) else {
         return;
     };
     transform.translation.z = 0.;
-    if can_place_item(&transform, &shop_item, &grid, &currency)
+    if can_place_item(&transform, item_type, &grid, &currency)
         && cable_can_connect(&transform.translation.truncate(), &grid, &mut grid_vals)
     {
         cable_state.set(CableState::Cabling);
@@ -53,7 +53,7 @@ pub fn drop_cable(
     }
 
     // snap back:
-    transform.translation = shop_item.pos.extend(0.);
+    transform.translation = shop_pos.0.extend(0.);
 }
 
 fn cable_can_connect(
