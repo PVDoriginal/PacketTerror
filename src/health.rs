@@ -18,7 +18,10 @@ impl Plugin for HealthPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Health { value: 100 });
         app.add_systems(OnEnter(GameStates::InGame), init_health);
-        app.add_systems(Update, update_health.run_if(in_state(GameStates::InGame)));
+        app.add_systems(
+            Update,
+            (update_health, damage_test).run_if(in_state(GameStates::InGame)),
+        );
         app.add_event::<UpdateHealthEvent>();
     }
 }
@@ -53,4 +56,13 @@ pub fn update_health(
         return;
     };
     text.0 = format!("Player Health: {} / 100", health.value);
+}
+
+pub fn damage_test(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut update_health_writer: EventWriter<UpdateHealthEvent>,
+) {
+    if keyboard_input.just_pressed(KeyCode::KeyR) {
+        update_health_writer.send(UpdateHealthEvent(-1));
+    }
 }
