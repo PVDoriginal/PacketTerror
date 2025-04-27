@@ -31,7 +31,7 @@ impl Into<ProjectileStats> for ProjectileType {
         match self {
             Self::Basic => ProjectileStats {
                 speed: 50.,
-                damage: 5,
+                damage: 6,
             },
         }
     }
