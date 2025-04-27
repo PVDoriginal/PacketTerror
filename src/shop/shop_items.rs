@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 
-use crate::items::CableDirection;
+use crate::items::{CableDirection, Server};
 use crate::{
     game::InGame,
-    items::{Cable, EnemyPC, Router, Switch, PC},
+    items::{Cable, EnemyPC, PC, Router, Switch},
 };
 
 #[derive(Component, Clone, Copy)]
@@ -13,6 +13,7 @@ pub enum ItemType {
     Router,
     Switch,
     Cable(CableDirection),
+    Server,
 }
 
 impl ItemType {
@@ -23,14 +24,16 @@ impl ItemType {
             ItemType::Router => "router.png",
             ItemType::Switch => "switch.png",
             ItemType::Cable(_) => "cable.png",
+            ItemType::Server => "server.png",
         }
         .to_string()
     }
     pub(crate) fn price(&self) -> u32 {
         match self {
-            ItemType::Router => 15,
-            ItemType::Switch => 10,
-            ItemType::Cable(_) => 1,
+            ItemType::Router => 20,
+            ItemType::Switch => 25,
+            ItemType::Cable(_) => 5,
+            ItemType::Server => 30,
 
             _ => 0,
         }
@@ -42,6 +45,7 @@ impl ItemType {
             ItemType::Router => "Router",
             ItemType::Switch => "Switch",
             ItemType::Cable(_) => "Cable",
+            ItemType::Server => "Server",
         }
         .to_string()
     }
@@ -53,6 +57,7 @@ impl ItemType {
             Self::Router => entity_commands.insert(Router),
             Self::Switch => entity_commands.insert(Switch),
             Self::Cable(dir) => entity_commands.insert(Cable { dir: *dir }),
+            Self::Server => entity_commands.insert(Server),
         };
     }
 }

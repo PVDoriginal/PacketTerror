@@ -3,11 +3,11 @@ pub mod shop_items;
 use currency::*;
 
 use bevy::{math::vec2, prelude::*};
-use shop_items::{spawn_shop_item, ItemType, ShopRefID, ShopUI};
+use shop_items::{ItemType, ShopRefID, ShopUI, spawn_shop_item};
 
+use crate::items::CableDirection;
 use crate::shop::shop_items::ShopPosition;
 use crate::{camera::SPRITE_SIZE, game::GameStates};
-use crate::items::CableDirection;
 
 pub struct ShopPlugin;
 
@@ -33,6 +33,7 @@ pub fn init_shop_items(
         ItemType::Router,
         ItemType::Switch,
         ItemType::Cable(CableDirection::Horizontal),
+        ItemType::Server,
         // for internal purposes
         ItemType::PC,
         ItemType::EnemyPC,

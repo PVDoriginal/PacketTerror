@@ -2,7 +2,8 @@ use bevy::prelude::*;
 
 use crate::game::InGame;
 
-mod packets;
+pub mod cables;
+pub mod packets;
 
 #[derive(Component)]
 #[require(InGame)]
