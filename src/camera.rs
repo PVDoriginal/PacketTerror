@@ -31,7 +31,7 @@ pub fn init_camera(mut commands: Commands) {
         },
         Msaa::Off,
         Transform::from_translation(vec3(
-            GRID_N as f32 / 2. * SPRITE_SIZE - SPRITE_SIZE / 2.,
+            GRID_N as f32 / 2. * SPRITE_SIZE - SPRITE_SIZE,
             GRID_M as f32 / 2. * SPRITE_SIZE - 34., // subtracted value is arbitrary so it looks good
             10.,
         )),

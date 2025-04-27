@@ -106,8 +106,8 @@ pub fn init_grid(mut commands: Commands, asset_server: Res<AssetServer>) {
                 .spawn((
                     Sprite::from_image(asset_server.load("grid_cell.png")),
                     Transform::from_translation(vec3(
-                        i as f32 * SPRITE_SIZE,
-                        j as f32 * SPRITE_SIZE,
+                        (i as f32 - 0.5) * SPRITE_SIZE,
+                        (j as f32 - 0.5) * SPRITE_SIZE,
                         -1.,
                     )),
                     Name::new("Grid Cell"),
