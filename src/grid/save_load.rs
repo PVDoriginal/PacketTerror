@@ -3,7 +3,7 @@ use crate::game::{BuildStates, GameStates};
 use crate::grid::cable_interaction::{CableSpawnMode, spawn_cable};
 use crate::grid::save_load::GridItem::{Cable, EnemyPC, PC, Router, Switch};
 use crate::grid::{GRID_M, GRID_N, Grid};
-use crate::items::CableDirection;
+use crate::items::cables::CableDirection;
 use crate::shop::shop_items::ItemType;
 use bevy::math::uvec2;
 use bevy::prelude::*;

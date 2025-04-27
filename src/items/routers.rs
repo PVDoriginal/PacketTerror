@@ -1,12 +1,15 @@
 use bevy::prelude::*;
 
-use crate::{camera::SPRITE_SIZE, grid::Grid};
+use crate::{camera::SPRITE_SIZE, game::InGame, grid::Grid};
 
 use super::{
-    Cable, Router,
-    cables::get_adj_cables,
+    cables::{Cable, get_adj_cables},
     packets::{EnemyPacket, Packet, PlayerPacket},
 };
+
+#[derive(Component)]
+#[require(InGame)]
+pub struct Router;
 
 pub struct RoutersPlugin;
 

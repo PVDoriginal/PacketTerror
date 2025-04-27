@@ -1,36 +1,49 @@
-use std::time::Duration;
+use bevy::prelude::*;
 
-use bevy::{prelude::*, time::common_conditions::on_timer};
-
-use crate::{camera::SPRITE_SIZE, game::GameStates, grid::Grid};
+use crate::{
+    camera::SPRITE_SIZE,
+    game::{GameStates, InGame},
+    grid::Grid,
+};
 
 use super::{
-    Cable, Server,
-    cables::get_adj_cables,
+    cables::{Cable, get_adj_cables},
     packets::{Packet, PacketType, PlayerPacket},
 };
+
+#[derive(Component)]
+pub struct FireRate(pub Timer);
+impl Default for FireRate {
+    fn default() -> Self {
+        FireRate(Timer::from_seconds(3., TimerMode::Repeating))
+    }
+}
+
+#[derive(Component)]
+#[require(InGame, FireRate)]
+pub struct Server;
 
 pub struct ServersPlugin;
 
 impl Plugin for ServersPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            create_packets
-                .run_if(in_state(GameStates::InGame))
-                .run_if(on_timer(Duration::from_secs(3))),
-        );
+        app.add_systems(Update, create_packets.run_if(in_state(GameStates::InGame)));
     }
 }
 
 fn create_packets(
-    packet_senders: Query<&Transform, With<Server>>,
+    mut packet_senders: Query<(&Transform, &mut FireRate), With<Server>>,
     cables: Query<&Cable>,
     grid: ResMut<Grid>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
+    time: Res<Time>,
 ) {
-    for packet_sender in &packet_senders {
+    for (packet_sender, mut fire_rate) in &mut packet_senders {
+        if !fire_rate.0.tick(time.delta()).just_finished() {
+            continue;
+        }
+
         let cables = get_adj_cables(packet_sender.translation.truncate(), &cables, &grid);
 
         for (cable_pos, adj_space) in cables {

@@ -1,13 +1,20 @@
 use std::time::Duration;
 
-use crate::{camera::SPRITE_SIZE, game::GameStates, grid::Grid, items::Cable};
+use crate::{
+    camera::SPRITE_SIZE,
+    game::{GameStates, InGame},
+    grid::Grid,
+};
 use bevy::{prelude::*, time::common_conditions::on_timer};
 
 use super::{
-    EnemyPC,
-    cables::get_adj_cables,
+    cables::{Cable, get_adj_cables},
     packets::{EnemyPacket, Packet, PacketType},
 };
+
+#[derive(Component)]
+#[require(InGame)]
+pub struct EnemyPC;
 
 pub struct EnemyPCPlugin;
 

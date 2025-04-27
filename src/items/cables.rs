@@ -1,11 +1,19 @@
-use crate::{
-    camera::SPRITE_SIZE,
-    grid::Grid,
-    items::{Cable, CableDirection},
-};
+use crate::{camera::SPRITE_SIZE, game::InGame, grid::Grid};
 use bevy::{math::vec2, prelude::*};
 
 use super::packets::Packet;
+
+#[derive(Component)]
+#[require(InGame)]
+pub struct Cable {
+    pub dir: CableDirection,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Asset, TypePath, Copy, Clone)]
+pub enum CableDirection {
+    Vertical,
+    Horizontal,
+}
 
 pub struct CablesPlugin;
 

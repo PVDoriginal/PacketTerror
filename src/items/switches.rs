@@ -1,12 +1,15 @@
 use bevy::prelude::*;
 
-use crate::grid::Grid;
+use crate::{game::InGame, grid::Grid};
 
 use super::{
-    Switch,
     packets::{EnemyPacket, PlayerPacket},
     projectiles::{Projectile, ProjectileType},
 };
+
+#[derive(Component)]
+#[require(InGame)]
+pub struct Switch;
 
 pub struct SwitchesPlugin;
 

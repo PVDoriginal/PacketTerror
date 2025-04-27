@@ -1,12 +1,16 @@
 use bevy::{math::vec3, prelude::*};
 use std::f32::consts::PI;
 
-use super::{interaction::can_place_item, Grid};
-use crate::items::{CableDirection, EnemyPC};
+use super::{Grid, interaction::can_place_item};
+use crate::items::PC;
+use crate::items::cables::{Cable, CableDirection};
+use crate::items::enemy_pc::EnemyPC;
+use crate::items::routers::Router;
+use crate::items::servers::Server;
+use crate::items::switches::Switch;
 use crate::shop::shop_items::ShopPosition;
 use crate::{
     camera::SPRITE_SIZE,
-    items::{Cable, Router, Server, Switch, PC},
     shop::{
         currency::{Currency, UpdateCurrencyEvent},
         shop_items::ItemType,

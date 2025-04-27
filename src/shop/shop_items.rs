@@ -1,9 +1,15 @@
 use bevy::prelude::*;
 
-use crate::items::{CableDirection, Server};
 use crate::{
     game::InGame,
-    items::{Cable, EnemyPC, PC, Router, Switch},
+    items::{
+        PC,
+        cables::{Cable, CableDirection},
+        enemy_pc::EnemyPC,
+        routers::Router,
+        servers::Server,
+        switches::Switch,
+    },
 };
 
 #[derive(Component, Clone, Copy)]

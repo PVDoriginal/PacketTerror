@@ -5,7 +5,7 @@ use currency::*;
 use bevy::{math::vec2, prelude::*};
 use shop_items::{ItemType, ShopRefID, ShopUI, spawn_shop_item};
 
-use crate::items::CableDirection;
+use crate::items::cables::CableDirection;
 use crate::shop::shop_items::ShopPosition;
 use crate::{camera::SPRITE_SIZE, game::GameStates};
 

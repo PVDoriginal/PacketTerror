@@ -6,6 +6,7 @@ use projectiles::ProjectilePlugin;
 use routers::RoutersPlugin;
 use servers::ServersPlugin;
 use switches::SwitchesPlugin;
+use upgrades::UpgradesPlugin;
 
 use crate::game::InGame;
 
@@ -16,38 +17,11 @@ pub mod projectiles;
 pub mod routers;
 pub mod servers;
 pub mod switches;
+pub mod upgrades;
 
 #[derive(Component)]
 #[require(InGame)]
 pub struct PC;
-
-#[derive(Component)]
-#[require(InGame)]
-pub struct Server;
-
-#[derive(Component)]
-#[require(InGame)]
-pub struct EnemyPC;
-
-#[derive(Component)]
-#[require(InGame)]
-pub struct Router;
-
-#[derive(Component)]
-#[require(InGame)]
-pub struct Switch;
-
-#[derive(Component)]
-#[require(InGame)]
-pub struct Cable {
-    pub dir: CableDirection,
-}
-
-#[derive(serde::Serialize, serde::Deserialize, Asset, TypePath, Copy, Clone)]
-pub enum CableDirection {
-    Vertical,
-    Horizontal,
-}
 
 pub struct ItemsPlugin;
 
@@ -61,6 +35,7 @@ impl Plugin for ItemsPlugin {
             ServersPlugin,
             SwitchesPlugin,
             ProjectilePlugin,
+            UpgradesPlugin,
         ));
     }
 }
