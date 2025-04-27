@@ -17,10 +17,10 @@ impl Plugin for RoutersPlugin {
 }
 
 fn redirect_packets(
-    packets: Query<(
-        &Transform,
+    mut packets: Query<(
+        &mut Transform,
         &Sprite,
-        &Packet,
+        &mut Packet,
         &Name,
         Entity,
         Option<&PlayerPacket>,
@@ -31,34 +31,46 @@ fn redirect_packets(
     grid: ResMut<Grid>,
     mut commands: Commands,
 ) {
-    for (pos, sprite, packet, name, packet_entity, is_player, is_enemy) in &packets {
+    for (mut pos, sprite, mut packet, name, packet_entity, is_player, is_enemy) in &mut packets {
         if let Some(_) = grid
             .get_element(pos.translation.truncate())
             .and_then(|e| routers.get(e).ok())
         {
-            let cables = get_adj_cables(pos.translation.truncate(), &cables, &grid);
+            let cables: Vec<(Vec2, Vec2)> =
+                get_adj_cables(pos.translation.truncate(), &cables, &grid)
+                    .into_iter()
+                    .filter(|(_, adj_space)| adj_space * -1. != packet.dir)
+                    .collect();
 
-            for (cable_pos, adj_space) in cables {
-                if adj_space * -1. == packet.dir {
-                    continue;
-                }
-
-                let mut packet = packet.clone();
-                packet.dir = adj_space;
-
-                let mut new_packet = commands.spawn((
-                    packet,
-                    sprite.clone(),
-                    name.clone(),
-                    Transform::from_translation(
-                        (cable_pos - adj_space * SPRITE_SIZE / 2.05).extend(2.),
-                    ),
-                ));
-
-                is_player.map(|_| new_packet.insert(PlayerPacket));
-                is_enemy.map(|_| new_packet.insert(EnemyPacket));
+            if cables.len() == 0 {
+                commands.entity(packet_entity).try_despawn();
+                continue;
             }
-            commands.entity(packet_entity).despawn();
+
+            for (index, &(cable_pos, adj_space)) in cables.iter().enumerate() {
+                // move the last packet
+                if index == cables.len() - 1 {
+                    packet.dir = adj_space;
+                    pos.translation = (cable_pos - adj_space * SPRITE_SIZE / 2.05).extend(2.);
+                }
+                // spawn new packets
+                else {
+                    let mut packet = packet.clone();
+                    packet.dir = adj_space;
+
+                    let mut new_packet = commands.spawn((
+                        packet,
+                        sprite.clone(),
+                        name.clone(),
+                        Transform::from_translation(
+                            (cable_pos - adj_space * SPRITE_SIZE / 2.05).extend(2.),
+                        ),
+                    ));
+
+                    is_player.map(|_| new_packet.insert(PlayerPacket));
+                    is_enemy.map(|_| new_packet.insert(EnemyPacket));
+                }
+            }
         }
     }
 }

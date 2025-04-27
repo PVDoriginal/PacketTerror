@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use cables::CablesPlugin;
 use enemy_pc::EnemyPCPlugin;
+use packets::PacketsPlugin;
 use projectiles::ProjectilePlugin;
 use routers::RoutersPlugin;
 use servers::ServersPlugin;
@@ -53,6 +54,7 @@ pub struct ItemsPlugin;
 impl Plugin for ItemsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
+            PacketsPlugin,
             CablesPlugin,
             EnemyPCPlugin,
             RoutersPlugin,

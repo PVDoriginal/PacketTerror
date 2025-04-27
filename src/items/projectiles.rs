@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
-use crate::shop::shop_items::ShopPosition;
+use super::packets::{EnemyPacket, PacketDamageEvent};
 
-use super::packets::{EnemyPacket, Packet};
+const COLLISION_RANGE: f32 = 1.;
 
 #[derive(Component)]
 pub struct Projectile {
@@ -41,7 +41,7 @@ pub struct ProjectilePlugin;
 
 impl Plugin for ProjectilePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, move_projectiles);
+        app.add_systems(Update, (move_projectiles, collide));
     }
 }
 
@@ -59,5 +59,26 @@ fn move_projectiles(
 
         let dir = (t_target.translation - t_projectile.translation).normalize();
         t_projectile.translation += dir * projectile.stats().speed * time.delta_secs();
+    }
+}
+
+fn collide(
+    projectiles: Query<(Entity, &GlobalTransform, &Projectile)>,
+    enemy_packets: Query<(Entity, &GlobalTransform), With<EnemyPacket>>,
+    mut damage_event: EventWriter<PacketDamageEvent>,
+    mut commands: Commands,
+) {
+    for (projectile_id, t_projectile, projectile) in &projectiles {
+        let Ok((target, t_target)) = enemy_packets.get(projectile.target) else {
+            continue;
+        };
+
+        if t_target.translation().distance(t_projectile.translation()) <= COLLISION_RANGE {
+            damage_event.send(PacketDamageEvent {
+                target,
+                damage: projectile.stats().damage,
+            });
+            commands.entity(projectile_id).despawn();
+        }
     }
 }
