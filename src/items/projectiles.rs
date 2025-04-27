@@ -21,9 +21,17 @@ pub struct ProjectileStats {
     pub damage: i32,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Component, Clone, Copy, PartialEq, Eq)]
 pub enum ProjectileType {
     Basic,
+    Mid,
+    Advanced,
+}
+
+impl Default for ProjectileType {
+    fn default() -> Self {
+        Self::Basic
+    }
 }
 
 impl Into<ProjectileStats> for ProjectileType {
@@ -32,6 +40,14 @@ impl Into<ProjectileStats> for ProjectileType {
             Self::Basic => ProjectileStats {
                 speed: 50.,
                 damage: 6,
+            },
+            Self::Mid => ProjectileStats {
+                speed: 60.,
+                damage: 10,
+            },
+            Self::Advanced => ProjectileStats {
+                speed: 100.,
+                damage: 15,
             },
         }
     }

@@ -3,15 +3,16 @@ use bevy::{
     prelude::*,
 };
 
-use super::servers::Server;
+use super::{servers::Server, switches::Switch};
 
 pub mod server_upgrades;
+pub mod switch_upgrades;
 
 pub struct UpgradesPlugin;
 
 impl Plugin for UpgradesPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (init_upgrades::<Server>,));
+        app.add_systems(Update, (init_upgrades::<Server>, init_upgrades::<Switch>));
     }
 }
 

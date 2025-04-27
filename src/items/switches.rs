@@ -8,7 +8,7 @@ use super::{
 };
 
 #[derive(Component)]
-#[require(InGame)]
+#[require(InGame, ProjectileType)]
 pub struct Switch;
 
 pub struct SwitchesPlugin;
@@ -24,11 +24,11 @@ fn shoot_projectiles(
     enemy_packets: Query<(Entity, &Transform), With<EnemyPacket>>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    switches: Query<(&GlobalTransform, &Switch)>,
+    switches: Query<(&GlobalTransform, &Switch, &ProjectileType)>,
     grid: ResMut<Grid>,
 ) {
     for (packet_entity, pos) in &player_packets {
-        if let Some((t_switch, _)) = grid
+        if let Some((t_switch, _, &projectile_type)) = grid
             .get_element(pos.translation.truncate())
             .and_then(|e| switches.get(e).ok())
         {
@@ -41,7 +41,7 @@ fn shoot_projectiles(
                 commands.spawn((
                     Projectile {
                         target,
-                        projectile_type: ProjectileType::Basic,
+                        projectile_type,
                     },
                     Sprite::from_image(asset_server.load("projectile.png")),
                     Transform::from_translation(t_switch.translation()),
