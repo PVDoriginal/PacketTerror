@@ -1,26 +1,24 @@
-use bevy::{prelude::*, utils::info};
+use bevy::prelude::*;
 
-use crate::{
-    camera::SPRITE_SIZE,
-    game::GameStates,
-    grid::Grid,
-    items::{Cable, Router, Switch},
+use crate::{camera::SPRITE_SIZE, grid::Grid};
+
+use super::{
+    Cable, Router,
+    cables::get_adj_cables,
+    packets::{EnemyPacket, Packet, PlayerPacket},
 };
 
-use super::{EnemyPacket, Packet, PlayerPacket, util::get_adj_cables};
+pub struct RoutersPlugin;
 
-pub struct MovementPlugin;
-
-impl Plugin for MovementPlugin {
+impl Plugin for RoutersPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, move_packets.run_if(in_state(GameStates::InGame)));
+        app.add_systems(Update, redirect_packets);
     }
 }
 
-fn move_packets(
-    time: Res<Time>,
-    mut packets: Query<(
-        &mut Transform,
+fn redirect_packets(
+    packets: Query<(
+        &Transform,
         &Sprite,
         &Packet,
         &Name,
@@ -28,24 +26,16 @@ fn move_packets(
         Option<&PlayerPacket>,
         Option<&EnemyPacket>,
     )>,
-    router: Query<&Router>,
+    routers: Query<&Router>,
     cables: Query<&Cable>,
-    switches: Query<&Switch>,
     grid: ResMut<Grid>,
     mut commands: Commands,
 ) {
-    for (mut pos, sprite, packet, name, packet_entity, is_player, is_enemy) in packets.iter_mut() {
-        let Some(entity) = grid.get_element(pos.translation.truncate()) else {
-            info!("TF?");
-            continue;
-        };
-
-        if cables.get(entity).is_ok() {
-            pos.translation += packet.dir.extend(0.) * packet.stats().speed * time.delta_secs();
-            continue;
-        }
-
-        if router.get(entity).is_ok() {
+    for (pos, sprite, packet, name, packet_entity, is_player, is_enemy) in &packets {
+        if let Some(_) = grid
+            .get_element(pos.translation.truncate())
+            .and_then(|e| routers.get(e).ok())
+        {
             let cables = get_adj_cables(pos.translation.truncate(), &cables, &grid);
 
             for (cable_pos, adj_space) in cables {
@@ -69,8 +59,6 @@ fn move_packets(
                 is_enemy.map(|_| new_packet.insert(EnemyPacket));
             }
             commands.entity(packet_entity).despawn();
-            continue;
         }
-        commands.entity(packet_entity).despawn();
     }
 }

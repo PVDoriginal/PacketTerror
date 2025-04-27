@@ -1,12 +1,6 @@
 use bevy::prelude::*;
-use movement::MovementPlugin;
-use spawning::SpawningPlugin;
 
 use crate::game::InGame;
-
-pub mod movement;
-pub mod spawning;
-pub mod util;
 
 #[derive(Component, Clone)]
 #[require(InGame)]
@@ -30,9 +24,9 @@ pub enum PacketType {
 }
 
 pub struct PacketStats {
-    speed: f32,
-    health: i32,
-    damage: i32,
+    pub speed: f32,
+    pub health: i32,
+    pub damage: i32,
 }
 
 impl Into<PacketStats> for PacketType {
@@ -54,11 +48,3 @@ pub struct EnemyPacket;
 #[derive(Component)]
 #[require(InGame)]
 pub struct PlayerPacket;
-
-pub struct PacketPlugin;
-
-impl Plugin for PacketPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_plugins((MovementPlugin, SpawningPlugin));
-    }
-}

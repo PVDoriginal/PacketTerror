@@ -1,9 +1,16 @@
 use bevy::prelude::*;
+use cables::CablesPlugin;
+use enemy_pc::EnemyPCPlugin;
+use routers::RoutersPlugin;
+use servers::ServersPlugin;
 
 use crate::game::InGame;
 
 pub mod cables;
+pub mod enemy_pc;
 pub mod packets;
+pub mod routers;
+pub mod servers;
 
 #[derive(Component)]
 #[require(InGame)]
@@ -41,6 +48,6 @@ pub struct ItemsPlugin;
 
 impl Plugin for ItemsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(packets::PacketPlugin);
+        app.add_plugins((CablesPlugin, EnemyPCPlugin, RoutersPlugin, ServersPlugin));
     }
 }
