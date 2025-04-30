@@ -3,6 +3,8 @@ use bevy::{
     prelude::*,
 };
 
+use crate::shop::currency::Currency;
+
 use super::{servers::Server, switches::Switch};
 
 pub mod server_upgrades;
@@ -29,14 +31,14 @@ pub trait Upgradable {
 #[derive(Component)]
 pub struct UpgradeLevel {
     pub level: u32,
-    pub next_price: i32,
+    pub next_price: Option<i32>,
 }
 
 impl From<i32> for UpgradeLevel {
     fn from(next_price: i32) -> Self {
         UpgradeLevel {
             level: 0,
-            next_price,
+            next_price: Some(next_price),
         }
     }
 }
@@ -56,11 +58,22 @@ fn init_upgrades<T: Upgradable + Component>(
 fn upgrade<T: Upgradable + Component>(
     trigger: Trigger<Pointer<Click>>,
     mut items: Query<(&T, &mut UpgradeLevel, T::Data)>,
+    mut currency: ResMut<Currency>,
 ) {
     let Ok((item, mut level, mut data)) = items.get_mut(trigger.entity()) else {
         return;
     };
 
-    item.upgrade(level.level, &mut data);
+    let Some(price) = level.next_price else {
+        return;
+    };
+
+    if currency.value < price {
+        return;
+    }
+
+    currency.value -= price;
+
+    level.next_price = item.upgrade(level.level, &mut data);
     level.level += 1;
 }
