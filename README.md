@@ -18,9 +18,9 @@ TODO
 ## Demo 
 TODO
 
-### User Stories
+## User Stories
 Puteti vedea [aici](https://github.com/users/PVDoriginal/projects/6) backlogul proiectului, format din user stories. 
 
-### Teste Automate 
+## Teste Automate 
 TODO?
 
