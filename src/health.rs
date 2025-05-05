@@ -58,16 +58,6 @@ pub fn update_health(
     text.0 = format!("Player Health: {} / 100", health.value);
 }
 
-pub fn damage_test(
-    // gonna be deleted soon
-    keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut update_health_writer: EventWriter<UpdateHealthEvent>,
-) {
-    if keyboard_input.just_pressed(KeyCode::KeyR) {
-        update_health_writer.send(UpdateHealthEvent(-1));
-    }
-}
-
 pub fn defeat(health: Res<Health>, mut next_state: ResMut<NextState<GameStates>>) {
     if health.value <= 0 {
         next_state.set(GameStates::MainMenu);
