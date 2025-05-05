@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use cables::CablesPlugin;
 use enemy_pc::EnemyPCPlugin;
 use packets::PacketsPlugin;
+use pcs::PcsPlugin;
 use projectiles::ProjectilePlugin;
 use routers::RoutersPlugin;
 use servers::ServersPlugin;
@@ -13,6 +14,7 @@ use crate::game::InGame;
 pub mod cables;
 pub mod enemy_pc;
 pub mod packets;
+pub mod pcs;
 pub mod projectiles;
 pub mod routers;
 pub mod servers;
@@ -36,6 +38,7 @@ impl Plugin for ItemsPlugin {
             SwitchesPlugin,
             ProjectilePlugin,
             UpgradesPlugin,
+            PcsPlugin,
         ));
     }
 }
