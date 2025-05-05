@@ -33,6 +33,7 @@ impl Plugin for ItemsPlugin {
             SwitchesPlugin,
             ProjectilePlugin,
             UpgradesPlugin,
+            PcsPlugin,
         ));
     }
 }
