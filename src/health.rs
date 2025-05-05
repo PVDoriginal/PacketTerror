@@ -20,7 +20,7 @@ impl Plugin for HealthPlugin {
         app.add_systems(OnEnter(GameStates::InGame), init_health);
         app.add_systems(
             Update,
-            (update_health, damage_test).run_if(in_state(GameStates::InGame)),
+            (update_health, defeat).run_if(in_state(GameStates::InGame)),
         );
         app.add_event::<UpdateHealthEvent>();
     }
@@ -65,5 +65,11 @@ pub fn damage_test(
 ) {
     if keyboard_input.just_pressed(KeyCode::KeyR) {
         update_health_writer.send(UpdateHealthEvent(-1));
+    }
+}
+
+pub fn defeat(health: Res<Health>, mut next_state: ResMut<NextState<GameStates>>) {
+    if health.value <= 0 {
+        next_state.set(GameStates::MainMenu);
     }
 }
