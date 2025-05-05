@@ -2,9 +2,9 @@ use bevy::{math::vec3, prelude::*};
 use std::f32::consts::PI;
 
 use super::{Grid, interaction::can_place_item};
-use crate::items::PC;
 use crate::items::cables::{Cable, CableDirection};
 use crate::items::enemy_pc::EnemyPC;
+use crate::items::pcs::PC;
 use crate::items::routers::Router;
 use crate::items::servers::Server;
 use crate::items::switches::Switch;

@@ -3,9 +3,9 @@ use bevy::prelude::*;
 use crate::{
     game::InGame,
     items::{
-        PC,
         cables::{Cable, CableDirection},
         enemy_pc::EnemyPC,
+        pcs::PC,
         routers::Router,
         servers::Server,
         switches::Switch,

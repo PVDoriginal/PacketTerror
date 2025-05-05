@@ -1,14 +1,14 @@
 use bevy::prelude::*;
 
-use crate::{game::InGame, grid::Grid};
+use crate::{game::InGame, grid::Grid, health::UpdateHealthEvent};
 
 use super::{
-    packets::{EnemyPacket, PlayerPacket},
+    packets::{EnemyPacket, Packet, PlayerPacket},
     projectiles::{Projectile, ProjectileType},
 };
 
 #[derive(Component)]
-#[require(InGame, ProjectileType)]
+#[require(InGame)]
 pub struct PC;
 
 pub struct PcsPlugin;
@@ -20,27 +20,18 @@ impl Plugin for PcsPlugin {
 }
 
 fn take_damage(
-    player_packets: Query<(Entity, &Transform), With<PlayerPacket>>,
     enemy_packets: Query<(Entity, &Transform, &Packet), With<EnemyPacket>>,
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    pcs: Query<(&GlobalTransform, &PC, &ProjectileType)>,
-    grid: ResMut<Grid>,
+    pcs: Query<&PC>,
+    grid: Res<Grid>,
+    mut update_health_writer: EventWriter<UpdateHealthEvent>,
 ) {
-    for (packet_entity, pos) in &enemy_packets {
-        if let Some((t_pc, _, &projectile_type)) = grid
+    for (packet_entity, pos, packet) in &enemy_packets {
+        if let Some(_) = grid
             .get_element(pos.translation.truncate())
             .and_then(|e| pcs.get(e).ok())
         {
-            if let Some((target, _)) = enemy_packets.iter().max_by(|&(_, t1), &(_, t2)| {
-                t1.translation
-                    .distance(pos.translation)
-                    .total_cmp(&t2.translation.distance(pos.translation))
-                    .reverse()
-            }) {
-                update_health_writer.send(UpdateHealthEvent(-packet_entity.stats().damage));
-            }
-
+            update_health_writer.send(UpdateHealthEvent(-packet.stats().damage));
             commands.entity(packet_entity).despawn();
         }
     }

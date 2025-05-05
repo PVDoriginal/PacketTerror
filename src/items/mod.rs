@@ -21,10 +21,6 @@ pub mod servers;
 pub mod switches;
 pub mod upgrades;
 
-#[derive(Component)]
-#[require(InGame)]
-pub struct PC;
-
 pub struct ItemsPlugin;
 
 impl Plugin for ItemsPlugin {
