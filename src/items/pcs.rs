@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{game::InGame, grid::Grid, health::update_health};
+use crate::{game::InGame, grid::Grid};
 
 use super::{
     packets::{EnemyPacket, PlayerPacket},
