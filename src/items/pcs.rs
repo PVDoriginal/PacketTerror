@@ -2,10 +2,7 @@ use bevy::prelude::*;
 
 use crate::{game::InGame, grid::Grid, health::UpdateHealthEvent};
 
-use super::{
-    packets::{EnemyPacket, Packet, PlayerPacket},
-    projectiles::{Projectile, ProjectileType},
-};
+use super::packets::{EnemyPacket, Packet};
 
 #[derive(Component)]
 #[require(InGame)]
