@@ -7,15 +7,11 @@ use super::{
     packets::{EnemyPacket, Packet, PlayerPacket},
 };
 
-pub struct DamageMultiply(i32);
-impl Default for DamageMultiply {
-    fn default() -> Self {
-        DamageMultiply(1)
-    }
-}
+#[derive(Component, Default)]
+pub struct DamageMultiplier(pub i32);
 
 #[derive(Component)]
-#[require(InGame)]
+#[require(InGame, DamageMultiplier)]
 pub struct Router;
 
 pub struct RoutersPlugin;
@@ -36,13 +32,13 @@ fn redirect_packets(
         Option<&PlayerPacket>,
         Option<&EnemyPacket>,
     )>,
-    routers: Query<&Router>,
+    routers: Query<(&DamageMultiplier, &Router)>,
     cables: Query<&Cable>,
     grid: ResMut<Grid>,
     mut commands: Commands,
 ) {
     for (mut pos, sprite, mut packet, name, packet_entity, is_player, is_enemy) in &mut packets {
-        if let Some(_) = grid
+        if let Some((r_dmg_multi, _)) = grid
             .get_element(pos.translation.truncate())
             .and_then(|e| routers.get(e).ok())
         {
@@ -56,6 +52,8 @@ fn redirect_packets(
                 commands.entity(packet_entity).try_despawn();
                 continue;
             }
+
+            packet.dmg_multi = r_dmg_multi.0;
 
             for (index, &(cable_pos, adj_space)) in cables.iter().enumerate() {
                 // move the last packet

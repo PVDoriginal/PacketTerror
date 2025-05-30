@@ -5,8 +5,9 @@ use bevy::{
 
 use crate::shop::currency::Currency;
 
-use super::{servers::Server, switches::Switch};
+use super::{routers::Router, servers::Server, switches::Switch};
 
+pub mod router_upgrades;
 pub mod server_upgrades;
 pub mod switch_upgrades;
 
@@ -14,7 +15,14 @@ pub struct UpgradesPlugin;
 
 impl Plugin for UpgradesPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (init_upgrades::<Server>, init_upgrades::<Switch>));
+        app.add_systems(
+            Update,
+            (
+                init_upgrades::<Server>,
+                init_upgrades::<Switch>,
+                init_upgrades::<Router>,
+            ),
+        );
     }
 }
 

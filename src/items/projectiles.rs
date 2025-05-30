@@ -8,6 +8,7 @@ const COLLISION_RANGE: f32 = 1.;
 pub struct Projectile {
     pub target: Entity,
     pub projectile_type: ProjectileType,
+    pub dmg_multi: i32,
 }
 
 impl Projectile {
@@ -92,7 +93,7 @@ fn collide(
         if t_target.translation().distance(t_projectile.translation()) <= COLLISION_RANGE {
             damage_event.send(PacketDamageEvent {
                 target,
-                damage: projectile.stats().damage,
+                damage: projectile.stats().damage * projectile.dmg_multi,
             });
             commands.entity(projectile_id).despawn();
         }

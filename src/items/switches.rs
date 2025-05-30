@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::{game::InGame, grid::Grid};
 
 use super::{
-    packets::{EnemyPacket, PlayerPacket},
+    packets::{EnemyPacket, Packet, PlayerPacket},
     projectiles::{Projectile, ProjectileType},
 };
 
@@ -20,14 +20,14 @@ impl Plugin for SwitchesPlugin {
 }
 
 fn shoot_projectiles(
-    player_packets: Query<(Entity, &Transform), With<PlayerPacket>>,
+    player_packets: Query<(Entity, &Transform, &Packet), With<PlayerPacket>>,
     enemy_packets: Query<(Entity, &Transform), With<EnemyPacket>>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     switches: Query<(&GlobalTransform, &Switch, &ProjectileType)>,
     grid: ResMut<Grid>,
 ) {
-    for (packet_entity, pos) in &player_packets {
+    for (packet_entity, pos, packet) in &player_packets {
         if let Some((t_switch, _, &projectile_type)) = grid
             .get_element(pos.translation.truncate())
             .and_then(|e| switches.get(e).ok())
@@ -42,12 +42,12 @@ fn shoot_projectiles(
                     Projectile {
                         target,
                         projectile_type,
+                        dmg_multi: packet.dmg_multi,
                     },
                     Sprite::from_image(asset_server.load("projectile.png")),
                     Transform::from_translation(t_switch.translation()),
                 ));
             }
-
             commands.entity(packet_entity).despawn();
         }
     }

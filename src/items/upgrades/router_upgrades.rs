@@ -1,11 +1,9 @@
-use bevy::prelude::*;
-
-use crate::items::routers::{DamageMultiply, Router};
+use crate::items::routers::{DamageMultiplier, Router};
 
 use super::Upgradable;
 
 impl Upgradable for Router {
-    type Data = &'static mut DamageMultiply;
+    type Data = &'static mut DamageMultiplier;
 
     fn init_price(&self) -> i32 {
         10
@@ -20,15 +18,15 @@ impl Upgradable for Router {
 
         match level {
             0 => {
-                damage_multiply.0 *= 1.5;
+                damage_multiply.0 = 1;
                 Some(20)
             }
             1 => {
-                damage_multiply.0 *= 2;
-                None
+                damage_multiply.0 = 2;
+                Some(30)
             }
             2 => {
-                damage_multiply.0 *= 2.5;
+                damage_multiply.0 = 3;
                 None
             }
             _ => None,

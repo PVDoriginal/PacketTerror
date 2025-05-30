@@ -8,6 +8,7 @@ pub struct Packet {
     pub dir: Vec2,
     pub hp: i32,
     pub packet_type: PacketType,
+    pub dmg_multi: i32,
 }
 impl Packet {
     pub fn new(dir: Vec2, packet_type: PacketType) -> Self {
@@ -16,6 +17,7 @@ impl Packet {
             dir,
             packet_type,
             hp: stats.health,
+            dmg_multi: 1,
         }
     }
 
@@ -29,8 +31,6 @@ pub enum PacketType {
     Basic,
     Mid,
     Advanced,
-    Speedy,
-    Giant,
 }
 
 pub struct PacketStats {
@@ -56,16 +56,6 @@ impl Into<PacketStats> for PacketType {
                 speed: 10.,
                 health: 25,
                 damage: 11,
-            },
-            Self::Speedy => PacketStats {
-                speed: 20.,
-                health: 8,
-                damage: 5,
-            },
-            Self::Boss => PacketStats {
-                speed: 5.,
-                health: 50,
-                damage: 100,
             },
         }
     }
