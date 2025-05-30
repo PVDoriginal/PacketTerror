@@ -16,6 +16,7 @@ pub mod health;
 pub mod items;
 pub mod main_menu;
 pub mod shop;
+pub mod testing;
 
 fn main() {
     App::new()
