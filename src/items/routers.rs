@@ -7,6 +7,13 @@ use super::{
     packets::{EnemyPacket, Packet, PlayerPacket},
 };
 
+pub struct DamageMultiply(i32);
+impl Default for DamageMultiply {
+    fn default() -> Self {
+        DamageMultiply(1)
+    }
+}
+
 #[derive(Component)]
 #[require(InGame)]
 pub struct Router;

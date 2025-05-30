@@ -27,6 +27,10 @@ impl Packet {
 #[derive(Clone, Copy)]
 pub enum PacketType {
     Basic,
+    Mid,
+    Advanced,
+    Speedy,
+    Giant,
 }
 
 pub struct PacketStats {
@@ -42,6 +46,26 @@ impl Into<PacketStats> for PacketType {
                 speed: 10.,
                 health: 10,
                 damage: 5,
+            },
+            Self::Mid => PacketStats {
+                speed: 10.,
+                health: 15,
+                damage: 8,
+            },
+            Self::Advanced => PacketStats {
+                speed: 10.,
+                health: 25,
+                damage: 11,
+            },
+            Self::Speedy => PacketStats {
+                speed: 20.,
+                health: 8,
+                damage: 5,
+            },
+            Self::Boss => PacketStats {
+                speed: 5.,
+                health: 50,
+                damage: 100,
             },
         }
     }
