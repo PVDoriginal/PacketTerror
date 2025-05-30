@@ -6,6 +6,7 @@ use game::GamePlugin;
 use grid::GridPlugin;
 use health::HealthPlugin;
 use items::ItemsPlugin;
+//use levels_menu::LevelsPlugin;
 use main_menu::MainMenuPlugin;
 use shop::ShopPlugin;
 
@@ -14,6 +15,7 @@ pub mod game;
 pub mod grid;
 pub mod health;
 pub mod items;
+//pub mod levels_menu;
 pub mod main_menu;
 pub mod shop;
 
@@ -30,6 +32,7 @@ fn main() {
             GridPlugin,
             ShopPlugin,
             ItemsPlugin,
+            //LevelsPlugin,
             MainMenuPlugin,
             HealthPlugin,
         ))

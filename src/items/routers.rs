@@ -7,6 +7,7 @@ use super::{
     packets::{EnemyPacket, Packet, PlayerPacket},
 };
 
+#[derive(Component)]
 pub struct DamageMultiply(i32);
 impl Default for DamageMultiply {
     fn default() -> Self {

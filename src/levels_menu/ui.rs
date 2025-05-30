@@ -3,37 +3,48 @@ use bevy::prelude::*;
 
 use crate::game::GameStates;
 
-use super::MainMenu;
+use super::LevelsMenu;
 
-const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
+const EASY_BUTTON: Color = Color::srgb(0., 0.5, 0.);
+const MEDIUM_BUTTON: Color = Color::srgb(0.5, 0.5, 0.);
+const HARD_BUTTON: Color = Color::srgb(0.5, 0., 0.);
+const EXPERT_BUTTON: Color = Color::srgb(0., 0., 0.5);
 const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.35, 0.35);
 
 #[derive(Event)]
-pub struct PlayBtnPress;
+pub struct EasyBtnPress;
 
 #[derive(Event)]
-pub struct LevelsBtnPress;
+pub struct MediumBtnPress;
 
 #[derive(Event)]
-pub struct QuitBtnPress;
+pub struct HardBtnPress;
+
+#[derive(Event)]
+pub struct ExpertBtnPress;
 
 #[derive(Component)]
 pub enum ButtonType {
-    Play,
-    Levels,
-    Quit,
+    Easy,
+    Medium,
+    Hard,
+    Expert,
 }
 
 pub struct UIPlugin;
 
 impl Plugin for UIPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<PlayBtnPress>();
-        app.add_event::<LevelsBtnPress>();
-        app.add_event::<QuitBtnPress>();
-        app.add_systems(OnEnter(GameStates::MainMenu), setup);
-        app.add_systems(Update, button_system.run_if(in_state(GameStates::MainMenu)));
+        app.add_event::<EasyBtnPress>();
+        app.add_event::<MediumBtnPress>();
+        app.add_event::<HardBtnPress>();
+        app.add_event::<ExpertBtnPress>();
+        app.add_systems(OnEnter(GameStates::LevelsMenu), setup);
+        app.add_systems(
+            Update,
+            button_system.run_if(in_state(GameStates::LevelsMenu)),
+        );
     }
 }
 
@@ -48,9 +59,10 @@ fn button_system(
         ),
         Changed<Interaction>,
     >,
-    mut play: EventWriter<PlayBtnPress>,
-    mut levels: EventWriter<LevelsBtnPress>,
-    mut quit: EventWriter<QuitBtnPress>,
+    mut easy: EventWriter<EasyBtnPress>,
+    mut medium: EventWriter<MediumBtnPress>,
+    mut hard: EventWriter<HardBtnPress>,
+    mut expert: EventWriter<ExpertBtnPress>,
 ) {
     for (interaction, btn_type, mut color, mut border_color, _children) in &mut interaction_query {
         match *interaction {
@@ -59,23 +71,24 @@ fn button_system(
                 border_color.0 = RED.into();
 
                 match btn_type {
-                    ButtonType::Play => {
-                        play.send(PlayBtnPress);
+                    ButtonType::Easy => {
+                        easy.send(EasyBtnPress);
                     }
-                    ButtonType::Levels => {
-                        levels.send(LevelsBtnPress);
+                    ButtonType::Medium => {
+                        medium.send(MediumBtnPress);
                     }
-                    ButtonType::Quit => {
-                        quit.send(QuitBtnPress);
+                    ButtonType::Hard => {
+                        hard.send(HardBtnPress);
+                    }
+                    ButtonType::Expert => {
+                        expert.send(ExpertBtnPress);
                     }
                 }
             }
             Interaction::Hovered => {
-                *color = HOVERED_BUTTON.into();
                 border_color.0 = Color::WHITE;
             }
             Interaction::None => {
-                *color = NORMAL_BUTTON.into();
                 border_color.0 = Color::BLACK;
             }
         }
@@ -85,8 +98,8 @@ fn button_system(
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn((
-            Name::new("main menu"),
-            MainMenu,
+            Name::new("levels menu"),
+            LevelsMenu,
             Node {
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
@@ -99,7 +112,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         ))
         .with_children(|parent| {
             parent.spawn((
-                Text::new("PACKET TERROR"),
+                Text::new("LEVEL SELECT"),
                 TextFont {
                     font: asset_server.load("fonts/courbd.ttf"),
                     font_size: 33.0,
@@ -110,7 +123,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             parent
                 .spawn((
                     Button,
-                    ButtonType::Play,
+                    ButtonType::Easy,
                     Node {
                         width: Val::Px(250.0),
                         height: Val::Px(65.0),
@@ -122,10 +135,10 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         ..default()
                     },
                     BorderColor(Color::BLACK),
-                    BackgroundColor(NORMAL_BUTTON),
+                    BackgroundColor(EASY_BUTTON),
                 ))
                 .with_child((
-                    Text::new("Sandbox"),
+                    Text::new("EASY"),
                     TextFont {
                         font: asset_server.load("fonts/courbd.ttf"),
                         font_size: 33.0,
@@ -136,7 +149,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             parent
                 .spawn((
                     Button,
-                    ButtonType::Levels,
+                    ButtonType::Medium,
                     Node {
                         width: Val::Px(250.0),
                         height: Val::Px(65.0),
@@ -148,10 +161,10 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         ..default()
                     },
                     BorderColor(Color::BLACK),
-                    BackgroundColor(NORMAL_BUTTON),
+                    BackgroundColor(MEDIUM_BUTTON),
                 ))
                 .with_child((
-                    Text::new("Levels"),
+                    Text::new("MEDIUM"),
                     TextFont {
                         font: asset_server.load("fonts/courbd.ttf"),
                         font_size: 33.0,
@@ -162,7 +175,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             parent
                 .spawn((
                     Button,
-                    ButtonType::Quit,
+                    ButtonType::Hard,
                     Node {
                         width: Val::Px(250.0),
                         height: Val::Px(65.0),
@@ -174,10 +187,36 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         ..default()
                     },
                     BorderColor(Color::BLACK),
-                    BackgroundColor(NORMAL_BUTTON),
+                    BackgroundColor(HARD_BUTTON),
                 ))
                 .with_child((
-                    Text::new("Quit"),
+                    Text::new("HARD"),
+                    TextFont {
+                        font: asset_server.load("fonts/courbd.ttf"),
+                        font_size: 33.0,
+                        ..default()
+                    },
+                    TextColor(Color::srgb(0.9, 0.9, 0.9)),
+                ));
+            parent
+                .spawn((
+                    Button,
+                    ButtonType::Expert,
+                    Node {
+                        width: Val::Px(250.0),
+                        height: Val::Px(65.0),
+                        border: UiRect::all(Val::Px(5.0)),
+                        // horizontally center child text
+                        justify_content: JustifyContent::Center,
+                        // vertically center child text
+                        align_items: AlignItems::Center,
+                        ..default()
+                    },
+                    BorderColor(Color::BLACK),
+                    BackgroundColor(EXPERT_BUTTON),
+                ))
+                .with_child((
+                    Text::new("EXPERT"),
                     TextFont {
                         font: asset_server.load("fonts/courbd.ttf"),
                         font_size: 33.0,

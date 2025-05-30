@@ -1,26 +1,26 @@
-use bevy::prelude::*;
-use ui::{LevelsBtnPress, PlayBtnPress, QuitBtnPress, UIPlugin};
+/*use bevy::prelude::*;
+use ui::{EasyBtnPress, ExpertBtnPress, HardBtnPress, MediumBtnPress};
 
 use crate::game::GameStates;
 
 pub mod ui;
 
 #[derive(Component)]
-pub struct MainMenu;
+pub struct LevelsMenu;
 
-pub struct MainMenuPlugin;
+pub struct LevelsPlugin;
 
-impl Plugin for MainMenuPlugin {
+impl Plugin for LevelsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(UIPlugin);
         app.add_systems(
             Update,
-            (on_play, on_levels, on_quit).run_if(in_state(GameStates::MainMenu)),
+            (on_easy, on_medium, on_hard, on_expert).run_if(in_state(GameStates::LevelsMenu)),
         );
     }
 }
 
-fn on_play(
+fn on_easy(
     mut event: EventReader<PlayBtnPress>,
     mut next_state: ResMut<NextState<GameStates>>,
     mut commands: Commands,
@@ -59,3 +59,4 @@ fn on_quit(mut event: EventReader<QuitBtnPress>, mut exit: EventWriter<AppExit>)
 
     exit.send(AppExit::Success);
 }
+*/

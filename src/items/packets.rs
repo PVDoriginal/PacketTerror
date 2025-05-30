@@ -30,7 +30,7 @@ pub enum PacketType {
     Mid,
     Advanced,
     Speedy,
-    Giant,
+    Boss,
 }
 
 pub struct PacketStats {
