@@ -24,7 +24,7 @@ impl Upgradable for Server {
                 Some(20)
             }
             1 => {
-                fire_rate.0 = Timer::from_seconds(2., TimerMode::Repeating);
+                fire_rate.0 = Timer::from_seconds(1.5, TimerMode::Repeating);
                 None
             }
             _ => None,
