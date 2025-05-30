@@ -13,7 +13,36 @@ Un joc [Tower Defense](https://en.wikipedia.org/wiki/Tower_defense) cu o tema ba
 Proiectul este realizat in [Bevy](https://bevyengine.org/), un game engine scris in Rust bazat pe design patternul [ECS](https://www.umlboard.com/design-patterns/entity-component-system.html) (Entity Component System) ce prioritizeaza viteza de compilare si paralelizarea codului intr-un mediu non-OOP. 
 
 ## UML 
-TODO
+Macro Gameplay Loop: 
+
+```mermaid
+flowchart
+  A[Main Menu] -- Leave --> B[Exit]
+  A -- Play --> C(Level Selection)
+  C -- Select Level --> D(In Level)
+  D -- Wave Starts --> E(New Wave)
+  E -- Build & Upgrade --> E 
+  E -- Survive Enemy Packets --> D
+  E -- Die --> A 
+  E -- Finish Last Wave --> F(Unlock New Level)
+  F --> A 
+```
+
+Micro Gameplay Loop: 
+```mermaid
+flowchart
+    B[Enemy PC] -- Sends Packet --> C(Packet Destroyed)
+    B[Enemy PC] -- Sends Packet --> D[Packet Reached Player]
+    D --> F(Health Decreased)
+    F -- If Zero --> X[Out] 
+    C[Packet Destroyed] -- Player gets Currency --> A
+    C -- Last Packet --> X[Out]
+    A[Game State] -- Buy Upgrade --> A
+    A -- Buy and Place new Item --> A
+    
+```
+
+
 
 ## Demo 
 TODO
