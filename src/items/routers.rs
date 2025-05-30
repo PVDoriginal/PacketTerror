@@ -7,6 +7,7 @@ use super::{
     packets::{EnemyPacket, Packet, PlayerPacket},
 };
 
+#[derive(Resource)]
 pub struct DamageMultiply(i32);
 impl Default for DamageMultiply {
     fn default() -> Self {
@@ -22,6 +23,7 @@ pub struct RoutersPlugin;
 
 impl Plugin for RoutersPlugin {
     fn build(&self, app: &mut App) {
+        app.init_resource::<DamageMultiply>();
         app.add_systems(Update, redirect_packets);
     }
 }
@@ -40,6 +42,7 @@ fn redirect_packets(
     cables: Query<&Cable>,
     grid: ResMut<Grid>,
     mut commands: Commands,
+    damage_multiplier: Res<DamageMultiply>,
 ) {
     for (mut pos, sprite, mut packet, name, packet_entity, is_player, is_enemy) in &mut packets {
         if let Some(_) = grid
@@ -56,6 +59,8 @@ fn redirect_packets(
                 commands.entity(packet_entity).try_despawn();
                 continue;
             }
+
+            packet.stats.damage *= damage_multiplier.0;
 
             for (index, &(cable_pos, adj_space)) in cables.iter().enumerate() {
                 // move the last packet

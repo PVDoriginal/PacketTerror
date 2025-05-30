@@ -8,6 +8,7 @@ pub struct Packet {
     pub dir: Vec2,
     pub hp: i32,
     pub packet_type: PacketType,
+    pub stats: PacketStats,
 }
 impl Packet {
     pub fn new(dir: Vec2, packet_type: PacketType) -> Self {
@@ -16,6 +17,7 @@ impl Packet {
             dir,
             packet_type,
             hp: stats.health,
+            stats,
         }
     }
 
@@ -30,9 +32,10 @@ pub enum PacketType {
     Mid,
     Advanced,
     Speedy,
-    Giant,
+    Boss,
 }
 
+#[derive(Clone, Copy)]
 pub struct PacketStats {
     pub speed: f32,
     pub health: i32,
