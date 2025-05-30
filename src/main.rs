@@ -16,6 +16,8 @@ pub mod health;
 pub mod items;
 pub mod main_menu;
 pub mod shop;
+
+#[cfg(test)]
 pub mod testing;
 
 fn main() {
