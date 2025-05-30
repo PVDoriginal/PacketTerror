@@ -22,5 +22,5 @@ TODO
 Puteti vedea [aici](https://github.com/users/PVDoriginal/projects/6) backlogul proiectului, format din user stories. 
 
 ## Teste Automate 
-TODO?
+Avem un fisier de (testing)[https://github.com/PVDoriginal/PacketTerror/blob/main/src/testing.rs] unde putem rula teste automate.
 
