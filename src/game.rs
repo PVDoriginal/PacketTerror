@@ -6,6 +6,10 @@ pub enum GameStates {
     MainMenu,
     InGame,
     LevelsMenu,
+    Easy,
+    Medium,
+    Hard,
+    Expert,
 }
 
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash)]

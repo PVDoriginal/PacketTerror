@@ -5,11 +5,11 @@ use crate::game::GameStates;
 
 use super::LevelsMenu;
 
-const EASY_BUTTON: Color = Color::srgb(0., 0.5, 0.);
-const MEDIUM_BUTTON: Color = Color::srgb(0.5, 0.5, 0.);
-const HARD_BUTTON: Color = Color::srgb(0.5, 0., 0.);
-const EXPERT_BUTTON: Color = Color::srgb(0., 0., 0.5);
-const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
+const EASY_BUTTON: Color = Color::srgb(0., 0.25, 0.);
+const MEDIUM_BUTTON: Color = Color::srgb(0.25, 0.25, 0.);
+const HARD_BUTTON: Color = Color::srgb(0.25, 0., 0.);
+const EXPERT_BUTTON: Color = Color::srgb(0., 0., 0.25);
+const BACK_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.35, 0.35);
 
 #[derive(Event)]
@@ -24,22 +24,27 @@ pub struct HardBtnPress;
 #[derive(Event)]
 pub struct ExpertBtnPress;
 
+#[derive(Event)]
+pub struct BackBtnPress;
+
 #[derive(Component)]
 pub enum ButtonType {
     Easy,
     Medium,
     Hard,
     Expert,
+    Back,
 }
 
-pub struct UIPlugin;
+pub struct LevUIPlugin;
 
-impl Plugin for UIPlugin {
+impl Plugin for LevUIPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<EasyBtnPress>();
         app.add_event::<MediumBtnPress>();
         app.add_event::<HardBtnPress>();
         app.add_event::<ExpertBtnPress>();
+        app.add_event::<BackBtnPress>();
         app.add_systems(OnEnter(GameStates::LevelsMenu), setup);
         app.add_systems(
             Update,
@@ -63,6 +68,7 @@ fn button_system(
     mut medium: EventWriter<MediumBtnPress>,
     mut hard: EventWriter<HardBtnPress>,
     mut expert: EventWriter<ExpertBtnPress>,
+    mut back: EventWriter<BackBtnPress>,
 ) {
     for (interaction, btn_type, mut color, mut border_color, _children) in &mut interaction_query {
         match *interaction {
@@ -82,6 +88,9 @@ fn button_system(
                     }
                     ButtonType::Expert => {
                         expert.send(ExpertBtnPress);
+                    }
+                    ButtonType::Back => {
+                        back.send(BackBtnPress);
                     }
                 }
             }
@@ -217,6 +226,32 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 ))
                 .with_child((
                     Text::new("EXPERT"),
+                    TextFont {
+                        font: asset_server.load("fonts/courbd.ttf"),
+                        font_size: 33.0,
+                        ..default()
+                    },
+                    TextColor(Color::srgb(0.9, 0.9, 0.9)),
+                ));
+            parent
+                .spawn((
+                    Button,
+                    ButtonType::Back,
+                    Node {
+                        width: Val::Px(250.0),
+                        height: Val::Px(65.0),
+                        border: UiRect::all(Val::Px(5.0)),
+                        // horizontally center child text
+                        justify_content: JustifyContent::Center,
+                        // vertically center child text
+                        align_items: AlignItems::Center,
+                        ..default()
+                    },
+                    BorderColor(Color::BLACK),
+                    BackgroundColor(BACK_BUTTON),
+                ))
+                .with_child((
+                    Text::new("BACK"),
                     TextFont {
                         font: asset_server.load("fonts/courbd.ttf"),
                         font_size: 33.0,
