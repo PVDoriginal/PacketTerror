@@ -1,6 +1,6 @@
 use bevy::{math::vec3, prelude::*};
 
-use super::{cable_interaction::drop_cable, Grid};
+use super::{Grid, cable_interaction::drop_cable};
 use crate::{
     camera::{SCALE, SPRITE_SIZE},
     shop::{
