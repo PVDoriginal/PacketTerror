@@ -11,6 +11,21 @@ pub struct Screen {
     pub rect: Rect,
 }
 
+#[derive(Resource, Default)]
+pub struct ScreenShake {
+    duration: f32,
+    strength: f32,
+    initial_pos: Vec3,
+}
+impl ScreenShake {
+    pub fn shake(&mut self, strength: f32, duration: f32) {
+        if strength > self.strength {
+            self.strength = strength * 10.;
+            self.duration = duration;
+        }
+    }
+}
+
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
@@ -19,6 +34,9 @@ impl Plugin for CameraPlugin {
 
         app.add_systems(Startup, init_camera);
         app.add_systems(Update, update_screen);
+
+        app.init_resource::<ScreenShake>();
+        app.add_systems(Update, screen_shake);
     }
 }
 
@@ -61,4 +79,34 @@ pub fn update_screen(
         center.x + half_width,
         center.y - half_height,
     );
+}
+
+fn screen_shake(
+    time: Res<Time>,
+    mut shake: ResMut<ScreenShake>,
+    mut cameras: Query<(&mut Transform, &OrthographicProjection), With<Camera2d>>,
+) {
+    let Ok((mut camera, _)) = cameras.get_single_mut() else {
+        return;
+    };
+    if shake.duration <= 0. {
+        shake.initial_pos = camera.translation;
+        return;
+    }
+    let delta = time.delta_secs();
+    shake.duration -= delta;
+
+    let offset = Vec3::new(
+        (rand::random::<f32>() - 0.5) * delta * shake.strength,
+        (rand::random::<f32>() - 0.5) * delta * shake.strength,
+        0.,
+    ); // 
+
+    camera.translation += offset;
+
+    if shake.duration <= 0. {
+        camera.translation = shake.initial_pos;
+        shake.strength = 0.;
+        return;
+    }
 }

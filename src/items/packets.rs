@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::game::InGame;
+use crate::{camera::ScreenShake, game::InGame};
 
 #[derive(Component, Clone)]
 #[require(InGame)]
@@ -87,6 +87,7 @@ impl Plugin for PacketsPlugin {
 fn receive_damage(
     mut event: EventReader<PacketDamageEvent>,
     mut packets: Query<&mut Packet>,
+    mut shake: ResMut<ScreenShake>,
     mut commands: Commands,
 ) {
     for e in event.read() {
@@ -97,6 +98,7 @@ fn receive_damage(
         packet.hp -= e.damage;
         if packet.hp <= 0 {
             commands.entity(e.target).try_despawn();
+            shake.shake(1., 0.1);
         }
     }
 }

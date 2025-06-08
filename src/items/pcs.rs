@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{game::InGame, grid::Grid, health::UpdateHealthEvent};
+use crate::{camera::ScreenShake, game::InGame, grid::Grid, health::UpdateHealthEvent};
 
 use super::packets::{EnemyPacket, Packet};
 
@@ -20,6 +20,7 @@ fn take_damage(
     enemy_packets: Query<(Entity, &Transform, &Packet), With<EnemyPacket>>,
     mut commands: Commands,
     pcs: Query<&PC>,
+    mut shake: ResMut<ScreenShake>,
     grid: Res<Grid>,
     mut update_health_writer: EventWriter<UpdateHealthEvent>,
 ) {
@@ -29,6 +30,8 @@ fn take_damage(
             .and_then(|e| pcs.get(e).ok())
         {
             update_health_writer.send(UpdateHealthEvent(-packet.stats().damage));
+            shake.shake(15., 0.2);
+
             commands.entity(packet_entity).despawn();
         }
     }
