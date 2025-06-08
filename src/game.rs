@@ -29,6 +29,7 @@ impl Plugin for GamePlugin {
         app.insert_state(BuildStates::Internal);
 
         app.add_systems(Update, start_state.run_if(in_state(GameStates::Start)));
+        app.add_systems(Update, main_menu_on_escape);
 
         app.add_systems(OnExit(GameStates::InGame), despawn_game);
     }
@@ -43,5 +44,13 @@ fn start_state(mut next_state: ResMut<NextState<GameStates>>) {
 fn despawn_game(mut commands: Commands, game: Query<Entity, With<InGame>>) {
     for game_object in &game {
         commands.entity(game_object).try_despawn_recursive();
+    }
+}
+fn main_menu_on_escape(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut next_state: ResMut<NextState<GameStates>>,
+) {
+    if keys.just_pressed(KeyCode::Escape) {
+        next_state.set(GameStates::MainMenu);
     }
 }
