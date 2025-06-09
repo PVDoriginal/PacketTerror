@@ -8,6 +8,7 @@ use health::HealthPlugin;
 use items::ItemsPlugin;
 use levels_menu::LevelsPlugin;
 use main_menu::MainMenuPlugin;
+use shake::ShakePlugin;
 use shop::ShopPlugin;
 
 pub mod camera;
@@ -17,6 +18,7 @@ pub mod health;
 pub mod items;
 pub mod levels_menu;
 pub mod main_menu;
+pub mod shake;
 pub mod shop;
 
 #[cfg(test)]
@@ -35,6 +37,7 @@ fn main() {
             LevelsPlugin,
             MainMenuPlugin,
             HealthPlugin,
+            ShakePlugin,
         ))
         .run();
 }

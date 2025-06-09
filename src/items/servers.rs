@@ -1,9 +1,10 @@
 use bevy::prelude::*;
 
 use crate::{
-    camera::{SPRITE_SIZE, Shake},
+    camera::SPRITE_SIZE,
     game::{GameStates, InGame},
     grid::Grid,
+    shake::Shake,
 };
 
 use super::{

@@ -87,9 +87,7 @@ fn load_on_play(
         info!("path not exist: assets/{}", &level.level_path());
         return;
     }
-
     commands.insert_resource(GridHandle(Some(asset_server.load(level.level_path()))));
-    info!("update handle?");
 }
 
 pub fn spawn_item(

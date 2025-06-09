@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::camera::Shake;
+use crate::shake::Shake;
 
 use super::packets::{EnemyPacket, PacketDamageEvent};
 

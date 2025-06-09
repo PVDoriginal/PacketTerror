@@ -1,10 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{
-    camera::{SPRITE_SIZE, Shake},
-    game::InGame,
-    grid::Grid,
-};
+use crate::{camera::SPRITE_SIZE, game::InGame, grid::Grid, shake::Shake};
 
 use super::{
     cables::{Cable, get_adj_cables},
@@ -36,19 +32,20 @@ fn redirect_packets(
         Option<&PlayerPacket>,
         Option<&EnemyPacket>,
     )>,
-    routers: Query<(Entity, &DamageMultiplier, &Router)>,
+    routers: Query<(Entity, &DamageMultiplier, &Transform), Without<Packet>>,
     cables: Query<&Cable>,
     grid: ResMut<Grid>,
     mut commands: Commands,
 ) {
     for (mut pos, sprite, mut packet, name, packet_entity, is_player, is_enemy) in &mut packets {
-        if let Some((router, r_dmg_multi, _)) = grid
+        if let Some((router, r_dmg_multi, router_transf)) = grid
             .get_element(pos.translation.truncate())
             .and_then(|e| routers.get(e).ok())
         {
             commands
                 .entity(router)
-                .insert(Shake::new(3., 0.2, pos.translation));
+                .insert(Shake::new(2., 0.2, router_transf.translation));
+
             let cables: Vec<(Vec2, Vec2)> =
                 get_adj_cables(pos.translation.truncate(), &cables, &grid)
                     .into_iter()

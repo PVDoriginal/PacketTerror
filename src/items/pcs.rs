@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{camera::Shake, game::InGame, grid::Grid, health::UpdateHealthEvent};
+use crate::{game::InGame, grid::Grid, health::UpdateHealthEvent, shake::Shake};
 
 use super::packets::{EnemyPacket, Packet};
 

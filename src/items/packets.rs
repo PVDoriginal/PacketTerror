@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 
-use crate::{camera::Shake, game::InGame};
+use crate::{game::InGame, shake::Shake};
 
 #[derive(Component)]
 struct HitTime {
@@ -136,7 +136,7 @@ fn packet_fx(
             *sprite = Sprite::from_image(asset_server.load("white_packet.png"));
 
             commands.entity(e.target).insert(HitTime {
-                timer: Timer::new(Duration::from_secs(1), TimerMode::Once),
+                timer: Timer::new(Duration::from_secs_f32(0.2), TimerMode::Once),
             });
         }
     }

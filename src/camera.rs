@@ -10,22 +10,6 @@ pub const SPRITE_SIZE: f32 = 21.;
 pub struct Screen {
     pub rect: Rect,
 }
-
-#[derive(Component)]
-pub struct Shake {
-    strength: f32,
-    timer: Timer,
-    initial_pos: Vec3,
-}
-impl Shake {
-    pub fn new(strength: f32, duration: f32, initial_pos: Vec3) -> Self {
-        Self {
-            strength,
-            timer: Timer::from_seconds(duration, TimerMode::Once),
-            initial_pos,
-        }
-    }
-}
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
@@ -34,7 +18,6 @@ impl Plugin for CameraPlugin {
 
         app.add_systems(Startup, init_camera);
         app.add_systems(Update, update_screen);
-        app.add_systems(Update, shake);
     }
 }
 
@@ -77,24 +60,4 @@ pub fn update_screen(
         center.x + half_width,
         center.y - half_height,
     );
-}
-
-fn shake(
-    mut shakable: Query<(Entity, &mut Shake, &mut Transform)>,
-    mut commands: Commands,
-    time: Res<Time>,
-) {
-    for (entity, mut shake, mut transl) in shakable.iter_mut() {
-        if shake.timer.tick(time.delta()).just_finished() {
-            transl.translation = shake.initial_pos;
-            commands.entity(entity).remove::<Shake>();
-            continue;
-        }
-
-        transl.translation += vec3(
-            (rand::random::<f32>() - 0.5) * 100. * time.delta_secs() * shake.strength,
-            (rand::random::<f32>() - 0.5) * 100. * time.delta_secs() * shake.strength,
-            0.,
-        );
-    }
 }
