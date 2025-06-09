@@ -8,6 +8,19 @@ pub enum GameLevels {
     Hard,
     Expert,
 }
+impl GameLevels {
+    pub fn level_path(&self) -> String {
+        let mut s1 = String::from("grids/");
+        s1.push_str(match self {
+            GameLevels::Sandbox => "sandbox.grid.json",
+            GameLevels::Easy => "easy.grid.json",
+            GameLevels::Medium => "medium.grid.json",
+            GameLevels::Hard => "hard.grid.json",
+            GameLevels::Expert => "expert.grid.json",
+        });
+        s1
+    }
+}
 
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum GameStates {

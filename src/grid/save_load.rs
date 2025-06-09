@@ -1,5 +1,5 @@
 use crate::camera::SPRITE_SIZE;
-use crate::game::{BuildStates, GameStates};
+use crate::game::{BuildStates, GameLevels, GameStates};
 use crate::grid::cable_interaction::{CableSpawnMode, spawn_cable};
 use crate::grid::save_load::GridItem::{Cable, EnemyPC, PC, Router, Switch};
 use crate::grid::{GRID_M, GRID_N, Grid};
@@ -12,6 +12,7 @@ use bevy::utils::HashSet;
 use bevy_common_assets::json::JsonAssetPlugin;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::Path;
 
 #[derive(serde::Serialize, serde::Deserialize, Asset, TypePath, Default)]
 pub struct GridState {
@@ -19,7 +20,7 @@ pub struct GridState {
 }
 
 #[derive(Resource)]
-pub struct GridHandle(Handle<GridState>);
+pub struct GridHandle(Option<Handle<GridState>>);
 
 #[derive(serde::Serialize, serde::Deserialize, Asset, TypePath)]
 pub enum GridItem {
@@ -61,10 +62,12 @@ pub struct SaveLoadPlugin;
 
 impl Plugin for SaveLoadPlugin {
     fn build(&self, app: &mut App) {
+        app.insert_resource(GridHandle(None));
+
         app.add_plugins(JsonAssetPlugin::<GridState>::new(&["grid.json"]));
 
-        app.add_systems(Startup, load_on_play);
-        app.add_systems(OnEnter(GameStates::InGame), populate_grid);
+        app.add_systems(OnEnter(GameStates::InGame), load_on_play);
+        app.add_systems(Update, populate_grid.run_if(in_state(GameStates::InGame)));
 
         app.add_systems(
             Update,
@@ -75,8 +78,17 @@ impl Plugin for SaveLoadPlugin {
 }
 
 // temporary
-fn load_on_play(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.insert_resource(GridHandle(asset_server.load("grids/test.grid.json")));
+fn load_on_play(
+    asset_server: Res<AssetServer>,
+    level: Res<State<GameLevels>>,
+    mut commands: Commands,
+) {
+    if !Path::new(&format!("assets/{}", level.level_path())).exists() {
+        info!("path not exist: assets/{}", &level.level_path());
+        return;
+    }
+    commands.insert_resource(GridHandle(Some(asset_server.load(level.level_path()))));
+    info!("update handle?");
 }
 
 pub fn spawn_item(
@@ -101,14 +113,18 @@ pub fn spawn_item(
 
 fn populate_grid(
     mut commands: Commands,
-    grid_handle: Res<GridHandle>,
+    mut grid_handle: ResMut<GridHandle>,
     mut grids: ResMut<Assets<GridState>>,
     asset_server: Res<AssetServer>,
     mut grid: ResMut<Grid>,
 ) {
-    let Some(grid_state) = grids.remove(grid_handle.0.id()) else {
+    if grid_handle.0.is_none() {
+        return;
+    }
+    let Some(grid_state) = grids.remove(grid_handle.0.clone().unwrap().id()) else {
         return;
     };
+    grid_handle.0 = None;
 
     for grid_item in grid_state.items {
         match grid_item {
@@ -171,7 +187,12 @@ fn populate_grid(
     }
 }
 
-fn save(grid: Res<Grid>, keys: Res<ButtonInput<KeyCode>>, items: Query<&ItemType>) {
+fn save(
+    grid: Res<Grid>,
+    keys: Res<ButtonInput<KeyCode>>,
+    items: Query<&ItemType>,
+    level: Res<State<GameLevels>>,
+) {
     if keys.pressed(KeyCode::ControlLeft) {
         if keys.just_pressed(KeyCode::KeyS) {
             let mut state = GridState::default();
@@ -202,7 +223,9 @@ fn save(grid: Res<Grid>, keys: Res<ButtonInput<KeyCode>>, items: Query<&ItemType
 
             info!("writing to file");
 
-            let mut writer = BufWriter::new(File::create("assets/grids/test.grid.json").unwrap());
+            let path = format!("assets/{}", level.level_path());
+
+            let mut writer = BufWriter::new(File::create(path).unwrap());
             serde_json::to_writer(&mut writer, &state).unwrap();
             writer.flush().unwrap();
         }
