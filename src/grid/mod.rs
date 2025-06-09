@@ -23,6 +23,14 @@ pub struct Grid {
 }
 
 impl Grid {
+    pub fn reset(&mut self) {
+        for i in 0..GRID_N {
+            for j in 0..GRID_M {
+                self.grid[i][j] = None;
+            }
+        }
+    }
+
     fn inside_grid(&self, mut pos: Vec2) -> bool {
         pos += SPRITE_SIZE / 2.;
         if pos.x >= GRID_N as f32 * SPRITE_SIZE || pos.x < 0. {

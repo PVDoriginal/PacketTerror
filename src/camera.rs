@@ -14,22 +14,15 @@ pub struct Screen {
 #[derive(Component)]
 pub struct Shake {
     strength: f32,
-    duration: f32,
+    timer: Timer,
     initial_pos: Vec3,
 }
 impl Shake {
     pub fn new(strength: f32, duration: f32, initial_pos: Vec3) -> Self {
         Self {
             strength,
-            duration,
+            timer: Timer::from_seconds(duration, TimerMode::Once),
             initial_pos,
-        }
-    }
-
-    pub fn shake(&mut self, strength: f32, duration: f32) {
-        if strength > self.strength {
-            self.strength = strength * 10.;
-            self.duration = duration;
         }
     }
 }
@@ -86,28 +79,22 @@ pub fn update_screen(
     );
 }
 
-fn shake(time: Res<Time>, mut shakable: Query<(&mut Shake, &mut Transform)>) {
-    for (mut shake, mut transl) in shakable.iter_mut() {
-        if shake.duration <= 0. {
-            shake.initial_pos = transl.translation;
-            return;
-        }
-
-        let delta = time.delta_secs();
-        shake.duration -= delta;
-
-        let offset = Vec3::new(
-            (rand::random::<f32>() - 0.5) * delta * shake.strength,
-            (rand::random::<f32>() - 0.5) * delta * shake.strength,
-            0.,
-        ); // 
-
-        transl.translation += offset;
-
-        if shake.duration <= 0. {
+fn shake(
+    mut shakable: Query<(Entity, &mut Shake, &mut Transform)>,
+    mut commands: Commands,
+    time: Res<Time>,
+) {
+    for (entity, mut shake, mut transl) in shakable.iter_mut() {
+        if shake.timer.tick(time.delta()).just_finished() {
             transl.translation = shake.initial_pos;
-            shake.strength = 0.;
-            return;
+            commands.entity(entity).remove::<Shake>();
+            continue;
         }
+
+        transl.translation += vec3(
+            (rand::random::<f32>() - 0.5) * 100. * time.delta_secs() * shake.strength,
+            (rand::random::<f32>() - 0.5) * 100. * time.delta_secs() * shake.strength,
+            0.,
+        );
     }
 }

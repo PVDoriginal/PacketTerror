@@ -9,7 +9,7 @@ pub struct Cable {
     pub dir: CableDirection,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Asset, TypePath, Copy, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Asset, TypePath, Copy, Clone, Debug)]
 pub enum CableDirection {
     Vertical,
     Horizontal,

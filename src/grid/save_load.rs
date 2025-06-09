@@ -22,7 +22,7 @@ pub struct GridState {
 #[derive(Resource)]
 pub struct GridHandle(Option<Handle<GridState>>);
 
-#[derive(serde::Serialize, serde::Deserialize, Asset, TypePath)]
+#[derive(serde::Serialize, serde::Deserialize, Asset, TypePath, Debug)]
 pub enum GridItem {
     PC(UVec2),
     EnemyPC(UVec2),
@@ -87,6 +87,7 @@ fn load_on_play(
         info!("path not exist: assets/{}", &level.level_path());
         return;
     }
+
     commands.insert_resource(GridHandle(Some(asset_server.load(level.level_path()))));
     info!("update handle?");
 }
@@ -118,12 +119,16 @@ fn populate_grid(
     asset_server: Res<AssetServer>,
     mut grid: ResMut<Grid>,
 ) {
-    if grid_handle.0.is_none() {
-        return;
-    }
-    let Some(grid_state) = grids.remove(grid_handle.0.clone().unwrap().id()) else {
+    let Some(handle) = grid_handle.0.as_ref().map(|a| a.id()) else {
         return;
     };
+
+    let Some(grid_state) = grids.remove(handle) else {
+        return;
+    };
+
+    grid.reset();
+
     grid_handle.0 = None;
 
     for grid_item in grid_state.items {
