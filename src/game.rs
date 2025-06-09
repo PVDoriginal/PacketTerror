@@ -1,15 +1,20 @@
 use bevy::prelude::*;
 
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
+pub enum GameLevels {
+    Sandbox,
+    Easy,
+    Medium,
+    Hard,
+    Expert,
+}
+
+#[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum GameStates {
     Start,
     MainMenu,
     InGame,
     LevelsMenu,
-    Easy,
-    Medium,
-    Hard,
-    Expert,
 }
 
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
@@ -26,6 +31,7 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_state(GameStates::Start);
+        app.insert_state(GameLevels::Sandbox);
         app.insert_state(BuildStates::Internal);
 
         app.add_systems(Update, start_state.run_if(in_state(GameStates::Start)));
