@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 
-use crate::{camera::ScreenShake, game::InGame};
+use crate::{camera::Shake, game::InGame};
 
 #[derive(Component)]
 struct HitTime {
@@ -114,8 +114,7 @@ fn packet_fx(
     mut sprites: Query<&mut Sprite>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
-
-    mut screen_shake: ResMut<ScreenShake>,
+    cameras: Query<(Entity, &Transform), With<Camera2d>>,
 ) {
     for e in event.read() {
         let Ok(packet) = packets.get(e.target) else {
@@ -127,7 +126,12 @@ fn packet_fx(
         };
 
         if packet.hp <= 0 {
-            screen_shake.shake(1., 0.1);
+            let Ok((camera, pos)) = cameras.get_single() else {
+                return;
+            };
+            commands
+                .entity(camera)
+                .insert(Shake::new(1., 0.1, pos.translation));
         } else {
             *sprite = Sprite::from_image(asset_server.load("white_packet.png"));
 

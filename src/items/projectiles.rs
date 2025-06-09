@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::camera::ScreenShake;
+use crate::camera::Shake;
 
 use super::packets::{EnemyPacket, PacketDamageEvent};
 
@@ -85,7 +85,7 @@ fn collide(
     projectiles: Query<(Entity, &GlobalTransform, &Projectile)>,
     enemy_packets: Query<(Entity, &GlobalTransform), With<EnemyPacket>>,
     mut damage_event: EventWriter<PacketDamageEvent>,
-    mut shake: ResMut<ScreenShake>,
+    cameras: Query<(Entity, &Transform), With<Camera2d>>,
     mut commands: Commands,
 ) {
     for (projectile_id, t_projectile, projectile) in &projectiles {
@@ -100,7 +100,12 @@ fn collide(
             });
             commands.entity(projectile_id).despawn();
 
-            shake.shake(0.5, 0.05);
+            let Ok((camera, pos)) = cameras.get_single() else {
+                return;
+            };
+            commands
+                .entity(camera)
+                .insert(Shake::new(0.5, 0.05, pos.translation));
         }
     }
 }

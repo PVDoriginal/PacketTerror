@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    camera::SPRITE_SIZE,
+    camera::{SPRITE_SIZE, Shake},
     game::{GameStates, InGame},
     grid::Grid,
 };
@@ -32,17 +32,20 @@ impl Plugin for ServersPlugin {
 }
 
 fn create_packets(
-    mut packet_senders: Query<(&Transform, &mut FireRate), With<Server>>,
+    mut packet_senders: Query<(Entity, &Transform, &mut FireRate), With<Server>>,
     cables: Query<&Cable>,
     grid: ResMut<Grid>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     time: Res<Time>,
 ) {
-    for (packet_sender, mut fire_rate) in &mut packet_senders {
+    for (server_entity, packet_sender, mut fire_rate) in &mut packet_senders {
         if !fire_rate.0.tick(time.delta()).just_finished() {
             continue;
         }
+        commands
+            .entity(server_entity)
+            .insert(Shake::new(2., 0.1, packet_sender.translation));
 
         let cables = get_adj_cables(packet_sender.translation.truncate(), &cables, &grid);
 

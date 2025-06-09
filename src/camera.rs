@@ -11,13 +11,21 @@ pub struct Screen {
     pub rect: Rect,
 }
 
-#[derive(Resource, Default)]
-pub struct ScreenShake {
-    duration: f32,
+#[derive(Component)]
+pub struct Shake {
     strength: f32,
+    duration: f32,
     initial_pos: Vec3,
 }
-impl ScreenShake {
+impl Shake {
+    pub fn new(strength: f32, duration: f32, initial_pos: Vec3) -> Self {
+        Self {
+            strength,
+            duration,
+            initial_pos,
+        }
+    }
+
     pub fn shake(&mut self, strength: f32, duration: f32) {
         if strength > self.strength {
             self.strength = strength * 10.;
@@ -25,7 +33,6 @@ impl ScreenShake {
         }
     }
 }
-
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
@@ -34,9 +41,7 @@ impl Plugin for CameraPlugin {
 
         app.add_systems(Startup, init_camera);
         app.add_systems(Update, update_screen);
-
-        app.init_resource::<ScreenShake>();
-        app.add_systems(Update, screen_shake);
+        app.add_systems(Update, shake);
     }
 }
 
@@ -81,32 +86,28 @@ pub fn update_screen(
     );
 }
 
-fn screen_shake(
-    time: Res<Time>,
-    mut shake: ResMut<ScreenShake>,
-    mut cameras: Query<(&mut Transform, &OrthographicProjection), With<Camera2d>>,
-) {
-    let Ok((mut camera, _)) = cameras.get_single_mut() else {
-        return;
-    };
-    if shake.duration <= 0. {
-        shake.initial_pos = camera.translation;
-        return;
-    }
-    let delta = time.delta_secs();
-    shake.duration -= delta;
+fn shake(time: Res<Time>, mut shakable: Query<(&mut Shake, &mut Transform)>) {
+    for (mut shake, mut transl) in shakable.iter_mut() {
+        if shake.duration <= 0. {
+            shake.initial_pos = transl.translation;
+            return;
+        }
 
-    let offset = Vec3::new(
-        (rand::random::<f32>() - 0.5) * delta * shake.strength,
-        (rand::random::<f32>() - 0.5) * delta * shake.strength,
-        0.,
-    ); // 
+        let delta = time.delta_secs();
+        shake.duration -= delta;
 
-    camera.translation += offset;
+        let offset = Vec3::new(
+            (rand::random::<f32>() - 0.5) * delta * shake.strength,
+            (rand::random::<f32>() - 0.5) * delta * shake.strength,
+            0.,
+        ); // 
 
-    if shake.duration <= 0. {
-        camera.translation = shake.initial_pos;
-        shake.strength = 0.;
-        return;
+        transl.translation += offset;
+
+        if shake.duration <= 0. {
+            transl.translation = shake.initial_pos;
+            shake.strength = 0.;
+            return;
+        }
     }
 }
