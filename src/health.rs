@@ -47,9 +47,7 @@ pub fn update_health(
     mut display_health: Query<&mut Text, With<HealthDisplay>>,
 ) {
     for ev in event_update.read() {
-        if health.value + ev.0 >= 0 {
-            health.value += ev.0;
-        }
+        health.value += ev.0;
     }
 
     let Ok(mut text) = display_health.get_single_mut() else {

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::grid::Grid;
+use crate::{grid::Grid, health::Health, shop::currency::Currency};
 
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum GameLevels {
@@ -47,7 +47,7 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_state(GameStates::Start);
         app.insert_state(GameLevels::Sandbox);
-        app.insert_state(BuildStates::Internal);
+        app.insert_state(BuildStates::Release);
 
         app.add_systems(Update, start_state.run_if(in_state(GameStates::Start)));
         app.add_systems(Update, main_menu_on_escape);
@@ -62,11 +62,19 @@ fn start_state(mut next_state: ResMut<NextState<GameStates>>) {
 }
 
 // runs when exiting game state
-fn despawn_game(mut commands: Commands, game: Query<Entity, With<InGame>>, mut grid: ResMut<Grid>) {
+fn despawn_game(
+    mut commands: Commands,
+    game: Query<Entity, With<InGame>>,
+    mut grid: ResMut<Grid>,
+    mut health: ResMut<Health>,
+    mut currency: ResMut<Currency>,
+) {
     for game_object in &game {
         commands.entity(game_object).try_despawn_recursive();
     }
     grid.reset();
+    health.value = 100;
+    currency.value = 300;
 }
 fn main_menu_on_escape(
     keys: Res<ButtonInput<KeyCode>>,

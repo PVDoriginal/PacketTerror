@@ -25,16 +25,17 @@ impl Plugin for CablesPlugin {
 
 fn move_packets(
     time: Res<Time>,
-    mut packets: Query<(&mut Transform, &Packet)>,
+    mut packets: Query<(Entity, &mut Transform, &Packet)>,
     cables: Query<&Cable>,
     grid: ResMut<Grid>,
+    mut commands: Commands,
 ) {
-    for (mut pos, packet) in packets.iter_mut() {
-        if let Some(_) = grid
-            .get_element(pos.translation.truncate())
-            .and_then(|e| cables.get(e).ok())
-        {
+    for (packet_entity, mut pos, packet) in packets.iter_mut() {
+        let entity = grid.get_element(pos.translation.truncate());
+        if let Some(_) = entity.and_then(|e| cables.get(e).ok()) {
             pos.translation += packet.dir.extend(0.) * packet.stats().speed * time.delta_secs();
+        } else {
+            commands.entity(packet_entity).try_despawn();
         }
     }
 }
