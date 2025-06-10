@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use ui::{BackBtnPress, EasyBtnPress, ExpertBtnPress, HardBtnPress, MediumBtnPress};
 
-use crate::game::{GameLevels, GameStates};
+use crate::game::{GameLevels, GameStates, HighestLevel};
 use crate::levels_menu::ui::LevUIPlugin;
 
 pub mod ui;
@@ -45,8 +45,9 @@ fn on_medium(
     mut event: EventReader<MediumBtnPress>,
     mut next_state: ResMut<NextState<GameStates>>,
     mut next_level: ResMut<NextState<GameLevels>>,
+    highest: Res<HighestLevel>,
 ) {
-    if event.read().len() == 0 {
+    if event.read().len() == 0 || u8::from(highest.highest) + 1 < GameLevels::Medium.into() {
         return;
     }
 
@@ -58,8 +59,9 @@ fn on_hard(
     mut event: EventReader<HardBtnPress>,
     mut next_state: ResMut<NextState<GameStates>>,
     mut next_level: ResMut<NextState<GameLevels>>,
+    highest: Res<HighestLevel>,
 ) {
-    if event.read().len() == 0 {
+    if event.read().len() == 0 || u8::from(highest.highest) + 1 < GameLevels::Hard.into() {
         return;
     }
 
@@ -71,8 +73,9 @@ fn on_expert(
     mut event: EventReader<ExpertBtnPress>,
     mut next_state: ResMut<NextState<GameStates>>,
     mut next_level: ResMut<NextState<GameLevels>>,
+    highest: Res<HighestLevel>,
 ) {
-    if event.read().len() == 0 {
+    if event.read().len() == 0 || u8::from(highest.highest) + 1 < GameLevels::Expert.into() {
         return;
     }
 

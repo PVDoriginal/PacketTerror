@@ -1,8 +1,18 @@
+use std::{fs::File, io::Read};
+
 use bevy::prelude::*;
 
 use crate::{grid::Grid, health::Health, shop::currency::Currency};
 
-#[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
+pub const HIGHEST_LEVEL_PATH: &str = "assets/highestlvl";
+
+#[derive(serde::Serialize, serde::Deserialize, Resource)]
+pub struct HighestLevel {
+    pub highest: GameLevels,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, States, Debug, Clone, PartialEq, Eq, Hash, Copy)]
+#[serde(into = "u8", from = "u8")]
 pub enum GameLevels {
     Sandbox,
     Easy,
@@ -10,6 +20,24 @@ pub enum GameLevels {
     Hard,
     Expert,
 }
+impl From<GameLevels> for u8 {
+    fn from(value: GameLevels) -> u8 {
+        value as u8
+    }
+}
+impl From<u8> for GameLevels {
+    fn from(value: u8) -> GameLevels {
+        match value {
+            0 => GameLevels::Sandbox,
+            1 => GameLevels::Easy,
+            2 => GameLevels::Medium,
+            3 => GameLevels::Hard,
+            4 => GameLevels::Expert,
+            _ => panic!("Invalid value for GameLevels: {}", value),
+        }
+    }
+}
+
 impl GameLevels {
     pub fn level_path(&self) -> String {
         let mut s1 = String::from("grids/");
@@ -45,6 +73,9 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
+        app.insert_resource(HighestLevel {
+            highest: GameLevels::Easy,
+        });
         app.insert_state(GameStates::Start);
         app.insert_state(GameLevels::Sandbox);
         app.insert_state(BuildStates::Release);
@@ -57,8 +88,16 @@ impl Plugin for GamePlugin {
 }
 
 // runs before entering main menu
-fn start_state(mut next_state: ResMut<NextState<GameStates>>) {
+fn start_state(mut next_state: ResMut<NextState<GameStates>>, mut highest: ResMut<HighestLevel>) {
     next_state.set(GameStates::MainMenu);
+
+    let Ok(mut file) = File::open(HIGHEST_LEVEL_PATH) else {
+        return;
+    };
+    let mut contents = Vec::<u8>::new();
+    file.read_to_end(&mut contents).ok();
+
+    highest.highest = contents[0].into();
 }
 
 // runs when exiting game state

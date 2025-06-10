@@ -1,6 +1,8 @@
+use std::{cmp, fs::File, io::Write};
+
 use crate::{
     camera::SPRITE_SIZE,
-    game::{GameLevels, GameStates, InGame},
+    game::{GameLevels, GameStates, HIGHEST_LEVEL_PATH, HighestLevel, InGame},
     grid::Grid,
     levels::{Level, WaveManager, advance_level, get_level},
 };
@@ -40,12 +42,20 @@ fn create_packets(
     time: Res<Time>,
     mut wave_manager: ResMut<WaveManager>,
     enemy_packets: Query<&EnemyPacket>,
-    // mut next_state: ResMut<NextState<GameStates>>,
+    state: Res<State<GameLevels>>,
+    mut highest: ResMut<HighestLevel>, // mut next_state: ResMut<NextState<GameStates>>,
 ) {
     let all_enemies_killed = enemy_packets.is_empty();
     let Some(packet_type) = advance_level(&mut wave_manager, &time, all_enemies_killed) else {
         if all_enemies_killed && !wave_manager.valid() {
-            // next_state.set(GameStates::MainMenu); // you win.
+            let Ok(mut file) = File::create(HIGHEST_LEVEL_PATH) else {
+                return;
+            };
+            let val: u8 = u8::from(**state);
+            highest.highest = cmp::max(val, highest.highest.into()).into();
+            file.write(&[Into::<u8>::into(highest.highest)]).ok();
+
+            // next_state.set(GameStates::MainMenu); // you win
         }
 
         return;
