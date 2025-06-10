@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::grid::Grid;
+
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum GameLevels {
     Sandbox,
@@ -60,10 +62,11 @@ fn start_state(mut next_state: ResMut<NextState<GameStates>>) {
 }
 
 // runs when exiting game state
-fn despawn_game(mut commands: Commands, game: Query<Entity, With<InGame>>) {
+fn despawn_game(mut commands: Commands, game: Query<Entity, With<InGame>>, mut grid: ResMut<Grid>) {
     for game_object in &game {
         commands.entity(game_object).try_despawn_recursive();
     }
+    grid.reset();
 }
 fn main_menu_on_escape(
     keys: Res<ButtonInput<KeyCode>>,

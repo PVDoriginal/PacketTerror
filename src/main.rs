@@ -16,6 +16,7 @@ pub mod game;
 pub mod grid;
 pub mod health;
 pub mod items;
+pub mod levels;
 pub mod levels_menu;
 pub mod main_menu;
 pub mod shake;
