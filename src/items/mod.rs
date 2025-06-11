@@ -9,8 +9,11 @@ use servers::ServersPlugin;
 use switches::SwitchesPlugin;
 use upgrades::UpgradesPlugin;
 
+use crate::items::items_ui::ItemsUIPlugin;
+
 pub mod cables;
 pub mod enemy_pc;
+pub mod items_ui;
 pub mod packets;
 pub mod pcs;
 pub mod projectiles;
@@ -33,6 +36,7 @@ impl Plugin for ItemsPlugin {
             ProjectilePlugin,
             UpgradesPlugin,
             PcsPlugin,
+            ItemsUIPlugin,
         ));
     }
 }
