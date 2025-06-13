@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use camera::CameraPlugin;
+use defeat_screen::DefeatScreenPlugin;
 use game::GamePlugin;
 use grid::GridPlugin;
 use health::HealthPlugin;
@@ -10,8 +11,10 @@ use levels_menu::LevelsPlugin;
 use main_menu::MainMenuPlugin;
 use shake::ShakePlugin;
 use shop::ShopPlugin;
+use victory_screen::VictoryScreenPlugin;
 
 pub mod camera;
+pub mod defeat_screen;
 pub mod game;
 pub mod grid;
 pub mod health;
@@ -21,6 +24,7 @@ pub mod levels_menu;
 pub mod main_menu;
 pub mod shake;
 pub mod shop;
+pub mod victory_screen;
 
 #[cfg(test)]
 pub mod testing;
@@ -39,6 +43,8 @@ fn main() {
             MainMenuPlugin,
             HealthPlugin,
             ShakePlugin,
+            DefeatScreenPlugin,
+            VictoryScreenPlugin,
         ))
         .run();
 }

@@ -58,6 +58,8 @@ pub enum GameStates {
     MainMenu,
     InGame,
     LevelsMenu,
+    DefeatScreen,
+    VictoryScreen,
 }
 
 #[derive(States, Debug, Clone, PartialEq, Eq, Hash)]
