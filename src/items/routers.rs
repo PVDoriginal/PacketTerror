@@ -44,7 +44,7 @@ fn redirect_packets(
         {
             commands
                 .entity(router)
-                .insert(Shake::new(2., 0.2, router_transf.translation));
+                .insert_if_new(Shake::new(2., 0.2, router_transf.translation));
 
             let cables: Vec<(Vec2, Vec2)> =
                 get_adj_cables(pos.translation.truncate(), &cables, &grid)

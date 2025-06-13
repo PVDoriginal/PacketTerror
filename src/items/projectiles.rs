@@ -105,7 +105,7 @@ fn collide(
             };
             commands
                 .entity(camera)
-                .insert(Shake::new(10., 0.02, pos.translation));
+                .insert_if_new(Shake::new(10., 0.02, pos.translation));
         }
     }
 }

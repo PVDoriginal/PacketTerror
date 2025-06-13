@@ -46,7 +46,7 @@ fn create_packets(
         }
         commands
             .entity(server_entity)
-            .insert(Shake::new(2., 0.1, packet_sender.translation));
+            .insert_if_new(Shake::new(2., 0.1, packet_sender.translation));
 
         let cables = get_adj_cables(packet_sender.translation.truncate(), &cables, &grid);
 
