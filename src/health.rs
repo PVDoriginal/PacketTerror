@@ -58,6 +58,6 @@ pub fn update_health(
 
 pub fn defeat(health: Res<Health>, mut next_state: ResMut<NextState<GameStates>>) {
     if health.value <= 0 {
-        next_state.set(GameStates::MainMenu);
+        next_state.set(GameStates::DefeatScreen);
     }
 }

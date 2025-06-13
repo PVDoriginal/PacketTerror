@@ -1,6 +1,5 @@
-use std::time::Duration;
-
 use bevy::prelude::*;
+use std::time::Duration;
 
 use crate::{game::GameLevels, items::packets::PacketType};
 
@@ -28,6 +27,9 @@ impl WaveManager {
     }
     pub fn get_index(&self) -> (usize, usize) {
         (self.i, self.j)
+    }
+    pub fn get_sandbox_timer() -> Timer {
+        return Timer::new(Duration::from_secs_f32(3.), TimerMode::Once);
     }
 }
 #[derive(Clone)]
@@ -59,12 +61,13 @@ pub fn advance_level(
     wave_manager: &mut ResMut<WaveManager>,
     time: &Res<Time>,
     can_start_next_wave: bool,
+    in_sandbox: bool,
 ) -> Option<PacketType> {
-    if wave_manager.level.is_none() {
+    if wave_manager.level.is_none() && !in_sandbox {
         return None;
     };
 
-    if wave_manager.i == 0 && wave_manager.j == 0 {
+    if !in_sandbox && wave_manager.i == 0 && wave_manager.j == 0 {
         wave_manager.j += 1;
 
         wave_manager.timer = wave_manager
@@ -77,6 +80,12 @@ pub fn advance_level(
     }
 
     wave_manager.timer.tick(time.delta());
+
+    if wave_manager.timer.finished() && in_sandbox {
+        wave_manager.timer = WaveManager::get_sandbox_timer();
+        wave_manager.timer = WaveManager::get_sandbox_timer();
+        return Some(PacketType::Basic);
+    }
 
     if wave_manager.timer.finished() {
         wave_manager.j += 1;
