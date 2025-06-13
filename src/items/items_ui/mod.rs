@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
+    game::GameStates,
     items::upgrades::UpgradeLevel,
     shop::shop_items::{ItemType, ShopPosition},
 };
@@ -30,6 +31,7 @@ impl Plugin for ItemsUIPlugin {
         app.add_systems(Startup, init_ui);
         app.add_systems(Update, make_hoverable);
         app.add_systems(Update, update_ui);
+        app.add_systems(OnExit(GameStates::InGame), disable_hover_on_leave);
     }
 }
 
@@ -138,7 +140,19 @@ fn make_hoverable(
     }
 }
 
-fn on_hover_enter(trigger: Trigger<Pointer<Over>>, mut hovered_item: ResMut<HoveredItem>) {
+fn disable_hover_on_leave(mut hovered_item: ResMut<HoveredItem>) {
+    hovered_item.0 = None;
+}
+
+fn on_hover_enter(
+    trigger: Trigger<Pointer<Over>>,
+    mut hovered_item: ResMut<HoveredItem>,
+    game_state: Res<State<GameStates>>,
+) {
+    if *game_state.get() != GameStates::InGame {
+        return;
+    }
+
     hovered_item.0 = Some(trigger.target);
 }
 
