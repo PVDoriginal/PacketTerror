@@ -116,12 +116,15 @@ fn start_upgrade<T: Upgradable + Component>(
         Mesh2d(meshes.add(Rectangle::new(SPRITE_SIZE, 0.))),
     ));
 }
-
 fn end_upgrade<T: Upgradable + Component>(
     _: Trigger<Pointer<Up>>,
+    mut upgrade_timer: ResMut<UpgradeTimer>,
     mut commands: Commands,
     mut rect: Query<Entity, With<Upgrading>>,
 ) {
+    upgrade_timer.entity = None;
+    upgrade_timer.timer = Timer::new(Duration::from_secs_f32(0.), TimerMode::Once);
+
     for rectangle in rect.iter_mut() {
         commands.entity(rectangle).despawn();
     }
@@ -135,10 +138,6 @@ fn upgrade<T: Upgradable + Component>(
     mut meshes: ResMut<Assets<Mesh>>,
     mut rect: Query<&mut Mesh2d, With<Upgrading>>,
 ) {
-    if upgrade_timer.timer.finished() {
-        return;
-    }
-
     let Some(entity) = upgrade_timer.entity else {
         return;
     };
@@ -167,5 +166,7 @@ fn upgrade<T: Upgradable + Component>(
 
         level.next_price = item.upgrade(level.level, &mut data);
         level.level += 1;
+
+        upgrade_timer.timer = Timer::new(Duration::from_secs_f32(UPGRADE_TIME), TimerMode::Once);
     }
 }
