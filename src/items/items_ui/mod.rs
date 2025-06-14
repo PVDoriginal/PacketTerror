@@ -61,7 +61,7 @@ fn update_ui(
         .world_to_viewport(camera.1, item_transform.translation())
         .expect("camera panik");
 
-    //shows info to the top right of an item
+    //shows info to the bottom right of an item
     hover_window.top = Val::Px(pos.y + 10.);
     hover_window.left = Val::Px(pos.x + 10.);
 
