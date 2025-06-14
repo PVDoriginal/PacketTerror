@@ -1,4 +1,5 @@
 use bevy::{math::vec3, prelude::*};
+const SHAKE_MULT: f32 = 80.;
 
 #[derive(Component)]
 pub struct Shake {
@@ -32,8 +33,8 @@ fn shake(
         }
 
         transl.translation += vec3(
-            (rand::random::<f32>() - 0.5) * 100. * time.delta_secs() * shake.strength,
-            (rand::random::<f32>() - 0.5) * 100. * time.delta_secs() * shake.strength,
+            (rand::random::<f32>() - 0.5) * SHAKE_MULT * time.delta_secs() * shake.strength,
+            (rand::random::<f32>() - 0.5) * SHAKE_MULT * time.delta_secs() * shake.strength,
             0.,
         );
     }

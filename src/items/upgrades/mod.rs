@@ -150,6 +150,10 @@ fn upgrade<T: Upgradable + Component>(
     let Some(price) = level.next_price else {
         return;
     };
+    if currency.value < price {
+        return;
+    }
+
     upgrade_timer.timer.tick(time.delta());
 
     for mut rectangle in rect.iter_mut() {

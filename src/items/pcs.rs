@@ -34,9 +34,10 @@ fn take_damage(
             let Ok((camera, pos)) = cameras.get_single() else {
                 return;
             };
+
             commands
                 .entity(camera)
-                .insert(Shake::new(15., 0.2, pos.translation));
+                .insert_if_new(Shake::new(15., 0.2, pos.translation));
 
             commands.entity(packet_entity).despawn();
         }

@@ -132,7 +132,7 @@ fn packet_fx(
             };
             commands
                 .entity(camera)
-                .insert(Shake::new(1., 0.1, pos.translation));
+                .insert_if_new(Shake::new(1., 0.1, pos.translation));
         } else {
             *sprite = Sprite::from_image(asset_server.load("white_packet.png"));
 
