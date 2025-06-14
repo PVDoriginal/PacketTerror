@@ -1,0 +1,175 @@
+﻿This conversation was generated with Duck.ai (https://duck.ai) using OpenAI's GPT-4o mini Model. AI chats may display inaccurate or offensive information (see https://duckduckgo.com/duckai/privacy-terms for more info).
+
+====================
+
+User prompt 1 of 2 - 6/10/2025, 9:59:57 AM:
+generate me some levels. I want increasingly more waves and more packets. here is the Rust/Bevy match template (note that the float is the time until next enemy, so lower means harder level):
+
+pub fn get_level(level: GameLevels) -> Level {
+    return match level {
+        GameLevels::Sandbox => Level {
+            waves: vec![Wave {
+                wave: vec![(PacketType::Basic, 1.)],
+            }],
+        },
+        GameLevels::Easy => Level {
+            waves: vec![Wave {
+                wave: vec![(PacketType::Basic, 1.)],
+            }],
+        },
+        GameLevels::Medium => Level {
+            waves: vec![Wave {
+                wave: vec![(PacketType::Basic, 1.)],
+            }],
+        },
+        GameLevels::Hard => Level {
+            waves: vec![Wave {
+                wave: vec![(PacketType::Basic, 1.)],
+            }],
+        },
+        GameLevels::Expert => Level {
+            waves: vec![Wave {
+                wave: vec![(PacketType::Basic, 1.)],
+            }],
+        },
+    };
+}
+
+note that these are the packet trypes, the lower being more difficult:
+pub enum PacketType {
+    Basic,
+    Mid,
+    Advanced,
+}
+
+
+GPT-4o mini:
+To create increasingly challenging levels in your Rust/Bevy game, we can design each level to have more waves and more packets, with the difficulty increasing as the level progresses. Below is an example implementation for the `get_level` function that defines five levels: Sandbox, Easy, Medium, Hard, and Expert. Each level will have a different number of waves and packets, with the time until the next enemy decreasing as the difficulty increases.
+
+```rust
+pub fn get_level(level: GameLevels) -> Level {
+    return match level {
+        GameLevels::Sandbox => Level {
+            waves: vec![Wave {
+                wave: vec![(PacketType::Basic, 1.0)],
+            }],
+        },
+        GameLevels::Easy => Level {
+            waves: vec![
+                Wave {
+                    wave: vec![(PacketType::Basic, 1.0)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Basic, 0.8)],
+                },
+            ],
+        },
+        GameLevels::Medium => Level {
+            waves: vec![
+                Wave {
+                    wave: vec![(PacketType::Basic, 1.0)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Basic, 0.8)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Mid, 0.6), (PacketType::Basic, 0.6)],
+                },
+            ],
+        },
+        GameLevels::Hard => Level {
+            waves: vec![
+                Wave {
+                    wave: vec![(PacketType::Basic, 1.0)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Mid, 0.8)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Mid, 0.6), (PacketType::Basic, 0.6)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Advanced, 0.5), (PacketType::Mid, 0.5)],
+                },
+            ],
+        },
+        GameLevels::Expert => Level {
+            waves: vec![
+                Wave {
+                    wave: vec![(PacketType::Basic, 1.0)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Mid, 0.8)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Mid, 0.6), (PacketType::Basic, 0.6)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Advanced, 0.5), (PacketType::Mid, 0.5)],
+                },
+                Wave {
+                    wave: vec![(PacketType::Advanced, 0.4), (PacketType::Mid, 0.4), (PacketType::Basic, 0.4)],
+                },
+            ],
+        },
+    };
+}
+```
+
+### Explanation of Each Level:
+- **Sandbox**: A single wave with one basic packet.
+- **Easy**: Two waves, the second wave has a slightly shorter time until the next enemy.
+- **Medium**: Three waves, introducing mid-level packets and a mix of basic packets.
+- **Hard**: Four waves, with more mid and advanced packets, and shorter times until the next enemy.
+- **Expert**: Five waves, with a mix of advanced, mid, and basic packets, and the shortest times until the next enemy.
+
+This structure allows for a gradual increase in difficulty, providing players with a more engaging experience as they progress through the levels.
+
+--------------------
+
+User prompt 2 of 2 - 6/10/2025, 10:01:20 AM:
+do you think the sintax for adding waves is super long/annoying? Also, add like 5 packets per wave, not just 1-2.
+
+GPT-4o mini:
+Yes, the syntax for adding waves can be a bit verbose, especially when you have multiple packets per wave. To streamline the process and make it easier to read, you can create a helper function to generate waves with multiple packets. This will reduce redundancy and improve clarity.
+
+Here's an updated version of the `get_level` function that includes five packets per wave and uses a helper function to simplify wave creation:
+
+```rust
+pub fn get_level(level: GameLevels) -> Level {
+    fn create_wave(packets: Vec<(PacketType, f32)>) -> Wave {
+        Wave { wave: packets }
+    }
+
+    return match level {
+        GameLevels::Sandbox => Level {
+            waves: vec![create_wave(vec![(PacketType::Basic, 1.0)])],
+        },
+        GameLevels::Easy => Level {
+            waves: vec![
+                create_wave(vec![(PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0)]),
+                create_wave(vec![(PacketType::Basic, 0.8), (PacketType::Basic, 0.8), (PacketType::Basic, 0.8), (PacketType::Basic, 0.8), (PacketType::Basic, 0.8)]),
+            ],
+        },
+        GameLevels::Medium => Level {
+            waves: vec![
+                create_wave(vec![(PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0)]),
+                create_wave(vec![(PacketType::Basic, 0.8), (PacketType::Basic, 0.8), (PacketType::Basic, 0.8), (PacketType::Basic, 0.8), (PacketType::Basic, 0.8)]),
+                create_wave(vec![(PacketType::Mid, 0.6), (PacketType::Mid, 0.6), (PacketType::Basic, 0.6), (PacketType::Basic, 0.6), (PacketType::Basic, 0.6)]),
+            ],
+        },
+        GameLevels::Hard => Level {
+            waves: vec![
+                create_wave(vec![(PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0)]),
+                create_wave(vec![(PacketType::Mid, 0.8), (PacketType::Mid, 0.8), (PacketType::Mid, 0.8), (PacketType::Basic, 0.8), (PacketType::Basic, 0.8)]),
+                create_wave(vec![(PacketType::Mid, 0.6), (PacketType::Mid, 0.6), (PacketType::Basic, 0.6), (PacketType::Basic, 0.6), (PacketType::Basic, 0.6)]),
+                create_wave(vec![(PacketType::Advanced, 0.5), (PacketType::Advanced, 0.5), (PacketType::Mid, 0.5), (PacketType::Mid, 0.5), (PacketType::Basic, 0.5)]),
+            ],
+        },
+        GameLevels::Expert => Level {
+            waves: vec![
+                create_wave(vec![(PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0), (PacketType::Basic, 1.0)]),
+                create_wave(vec![(PacketType::Mid, 0.8), (PacketType::Mid, 0.8), (PacketType::Mid, 0.8), (PacketType::Mid, 0.8), (PacketType::Basic, 0.8)]),
+                create_wave(vec![(PacketType::Mid, 0.6), (PacketType::Mid, 0.6), (PacketType::Basic, 0.6), (PacketType::Basic, 0.6), (PacketType::Basic, 0.6)]),
+                create_wave(vec![(PacketType::Advanced, 0.5), (PacketType::Advanced, 0.5), (PacketType::Mid, 0.5), (PacketType::Mid, 0.5), (PacketType::Basic, 0.5)]),
+                create
