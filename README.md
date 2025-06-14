@@ -45,7 +45,7 @@ flowchart
 
 
 ## Demo 
-<iframe src="https://www.youtube.com/watch?v=xORSITrdFNk"></iframe>
+[![Watch the video](https://img.youtube.com/vi/xORSITrdFNk/0.jpg)](https://www.youtube.com/watch?v=xORSITrdFNk)
 
 ## User Stories
 Puteti vedea [aici](https://github.com/users/PVDoriginal/projects/6) backlogul proiectului, format din user stories. 
