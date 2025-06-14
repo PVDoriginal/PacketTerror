@@ -5,6 +5,7 @@ use crate::game::GameStates;
 
 use super::LevelsMenu;
 
+//colors for each button
 const EASY_BUTTON: Color = Color::srgb(0., 0.25, 0.);
 const MEDIUM_BUTTON: Color = Color::srgb(0.25, 0.25, 0.);
 const HARD_BUTTON: Color = Color::srgb(0.25, 0., 0.);
@@ -53,6 +54,7 @@ impl Plugin for LevUIPlugin {
     }
 }
 
+//manage button interactions
 fn button_system(
     mut interaction_query: Query<
         (
@@ -104,6 +106,7 @@ fn button_system(
     }
 }
 
+//create the UI
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn((
@@ -129,6 +132,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 },
                 TextColor(Color::srgb(0.5, 0.0, 0.0)),
             ));
+            //this below is the easy button
             parent
                 .spawn((
                     Button,

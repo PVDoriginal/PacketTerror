@@ -25,6 +25,8 @@ impl From<GameLevels> for u8 {
         value as u8
     }
 }
+
+//all the possible levels
 impl From<u8> for GameLevels {
     fn from(value: u8) -> GameLevels {
         match value {
@@ -38,6 +40,7 @@ impl From<u8> for GameLevels {
     }
 }
 
+//grids for each level
 impl GameLevels {
     pub fn level_path(&self) -> String {
         let mut s1 = String::from("grids/");

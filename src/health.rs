@@ -26,6 +26,7 @@ impl Plugin for HealthPlugin {
     }
 }
 
+//initial health
 pub fn init_health(mut commands: Commands, health: Res<Health>) {
     commands.spawn((
         HealthDisplay,
@@ -41,6 +42,7 @@ pub fn init_health(mut commands: Commands, health: Res<Health>) {
     ));
 }
 
+//shows your health
 pub fn update_health(
     mut health: ResMut<Health>,
     mut event_update: EventReader<UpdateHealthEvent>,
@@ -56,6 +58,7 @@ pub fn update_health(
     text.0 = format!("Player Health: {} / 100", health.value);
 }
 
+//defeat screen if you end up with 0 health
 pub fn defeat(health: Res<Health>, mut next_state: ResMut<NextState<GameStates>>) {
     if health.value <= 0 {
         next_state.set(GameStates::DefeatScreen);

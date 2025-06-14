@@ -37,6 +37,7 @@ impl Plugin for CableInteractionPlugin {
     }
 }
 
+//dropping the cable
 pub fn drop_cable(
     trigger: Trigger<Pointer<DragEnd>>,
     mut transforms: Query<(&mut Transform, &ShopPosition, &ItemType)>,
@@ -70,6 +71,7 @@ pub fn drop_cable(
     transform.translation = shop_pos.0.extend(0.);
 }
 
+//checks if cables can connect
 fn cable_can_connect(
     pos: &Vec2,
     grid: &ResMut<Grid>,
@@ -148,6 +150,7 @@ pub fn click_cable(
     let price = pos1.as_vec2().distance(pos2.as_vec2()) as i32;
 
     if currency.value < price {
+        //if you can't afford a cable
         return;
     }
 
@@ -168,7 +171,7 @@ pub fn click_cable(
         direction,
     );
 
-    writer.send(UpdateCurrencyEvent(-1 * price));
+    writer.send(UpdateCurrencyEvent(-1 * price)); //pay 1 credit for each cable
 }
 
 #[derive(Eq, PartialEq)]
@@ -215,6 +218,7 @@ pub fn spawn_cable(
         .id();
 
     let rotation = match dir {
+        //for horizontal and vertical cables
         CableDirection::Horizontal => Quat::IDENTITY,
         CableDirection::Vertical => Quat::from_rotation_z(PI / 2.),
     };

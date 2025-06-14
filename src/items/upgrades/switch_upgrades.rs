@@ -20,8 +20,8 @@ impl Upgradable for Switch {
 
         match level {
             0 => {
-                projectile_type.set_if_neq(ProjectileType::Mid);
-                Some(20)
+                projectile_type.set_if_neq(ProjectileType::Mid); //improves the projectile type
+                Some(20) //upgrade cost
             }
             1 => {
                 projectile_type.set_if_neq(ProjectileType::Advanced);

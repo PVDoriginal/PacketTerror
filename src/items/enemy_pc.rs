@@ -33,6 +33,7 @@ fn load_level(mut wave_manager: ResMut<WaveManager>, state: Res<State<GameLevels
     wave_manager.timer = (&lvl).get_timer(0, 0);
 }
 
+//sends packets to your pc
 fn create_packets(
     packet_senders: Query<&Transform, With<EnemyPC>>,
     cables: Query<&Cable>,

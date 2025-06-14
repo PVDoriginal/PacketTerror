@@ -23,6 +23,7 @@ pub enum ItemType {
 }
 
 impl ItemType {
+    //assets
     pub fn sprite_path(&self) -> String {
         match self {
             ItemType::PC => "pc.png",
@@ -34,16 +35,20 @@ impl ItemType {
         }
         .to_string()
     }
+
+    //prices
     pub(crate) fn price(&self) -> u32 {
         match self {
             ItemType::Router => 20,
             ItemType::Switch => 25,
-            ItemType::Cable(_) => 5,
+            ItemType::Cable(_) => 1, //1 credit per square
             ItemType::Server => 30,
 
             _ => 0,
         }
     }
+
+    //names
     pub fn name(&self) -> String {
         match self {
             ItemType::PC => "PC",

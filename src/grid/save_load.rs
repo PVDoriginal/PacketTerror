@@ -46,6 +46,7 @@ impl GridItem {
 }
 
 impl Into<ItemType> for GridItem {
+    //transforms grid items into item types
     fn into(self) -> ItemType {
         match self {
             GridItem::PC(_) => ItemType::PC,
@@ -111,6 +112,7 @@ pub fn spawn_item(
 }
 
 fn populate_grid(
+    //add items
     mut commands: Commands,
     mut grid_handle: ResMut<GridHandle>,
     mut grids: ResMut<Assets<GridState>>,
@@ -191,6 +193,7 @@ fn populate_grid(
 }
 
 fn save(
+    //save the map with Ctrl+S
     grid: Res<Grid>,
     keys: Res<ButtonInput<KeyCode>>,
     items: Query<&ItemType>,

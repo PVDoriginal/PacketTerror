@@ -20,6 +20,7 @@ impl Plugin for MainMenuPlugin {
     }
 }
 
+//sends you to sandbox
 fn on_play(
     mut event: EventReader<PlayBtnPress>,
     mut next_state: ResMut<NextState<GameStates>>,
@@ -37,6 +38,7 @@ fn on_play(
     next_state.set(GameStates::InGame);
 }
 
+//sends you to the levels menu
 fn on_levels(
     mut event: EventReader<LevelsBtnPress>,
     mut next_state: ResMut<NextState<GameStates>>,
@@ -53,6 +55,7 @@ fn on_levels(
     next_state.set(GameStates::LevelsMenu);
 }
 
+//exits the game
 fn on_quit(mut event: EventReader<QuitBtnPress>, mut exit: EventWriter<AppExit>) {
     if event.read().len() == 0 {
         return;

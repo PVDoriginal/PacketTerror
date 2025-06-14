@@ -16,6 +16,7 @@ impl Plugin for PcsPlugin {
     }
 }
 
+//loses health when an enemy packet reaches it
 fn take_damage(
     enemy_packets: Query<(Entity, &Transform, &Packet), With<EnemyPacket>>,
     mut commands: Commands,

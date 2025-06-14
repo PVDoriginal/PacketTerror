@@ -37,6 +37,7 @@ impl Default for ProjectileType {
     }
 }
 
+//types of projectiles
 impl Into<ProjectileStats> for ProjectileType {
     fn into(self) -> ProjectileStats {
         match self {
@@ -64,6 +65,7 @@ impl Plugin for ProjectilePlugin {
     }
 }
 
+//travelling to the enemy packet
 fn move_projectiles(
     mut projectiles: Query<(&mut Transform, &Projectile, Entity), Without<EnemyPacket>>,
     enemy_packets: Query<&Transform, With<EnemyPacket>>,
@@ -81,6 +83,7 @@ fn move_projectiles(
     }
 }
 
+//projectile hits enemy packet
 fn collide(
     projectiles: Query<(Entity, &GlobalTransform, &Projectile)>,
     enemy_packets: Query<(Entity, &GlobalTransform), With<EnemyPacket>>,

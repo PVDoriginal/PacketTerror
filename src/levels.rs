@@ -127,6 +127,7 @@ pub fn get_level(level: GameLevels) -> Level {
         Wave { wave: packets }
     }
 
+    //create the waves for each level
     return match level {
         GameLevels::Sandbox => Level {
             waves: vec![create_wave(vec![(PacketType::Basic, 1.0)])],

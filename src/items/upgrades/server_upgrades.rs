@@ -20,8 +20,8 @@ impl Upgradable for Server {
 
         match level {
             0 => {
-                fire_rate.0 = Timer::from_seconds(2., TimerMode::Repeating);
-                Some(20)
+                fire_rate.0 = Timer::from_seconds(2., TimerMode::Repeating); //upgrading makes the server send packets faster
+                Some(20) //upgrade cost
             }
             1 => {
                 fire_rate.0 = Timer::from_seconds(1.5, TimerMode::Repeating);

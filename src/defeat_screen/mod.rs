@@ -20,6 +20,7 @@ impl Plugin for DefeatScreenPlugin {
     }
 }
 
+//system to to the main menu
 fn on_return(
     mut event: EventReader<FiveRonBtnPress>,
     mut next_state: ResMut<NextState<GameStates>>,
@@ -30,7 +31,7 @@ fn on_return(
         return;
     }
     let defeat_screen = defeat_screen.single();
-    commands.entity(defeat_screen).despawn_recursive();
+    commands.entity(defeat_screen).despawn_recursive(); //remove the elements of the defeat screen
 
-    next_state.set(GameStates::MainMenu);
+    next_state.set(GameStates::MainMenu); //return to main menu
 }

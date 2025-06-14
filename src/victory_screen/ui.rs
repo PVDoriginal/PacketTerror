@@ -30,6 +30,7 @@ impl Plugin for VictoryUIPlugin {
     }
 }
 
+//manages interactions
 fn button_system(
     mut interaction_query: Query<
         (
@@ -67,6 +68,7 @@ fn button_system(
     }
 }
 
+//creates the UI
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn((

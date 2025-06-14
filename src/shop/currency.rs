@@ -22,6 +22,7 @@ impl Plugin for CurrencyPlugin {
     }
 }
 
+//show the currency
 pub fn init_currency(mut commands: Commands, currency: Res<Currency>) {
     commands.spawn((
         CurrencyDisplay,
@@ -33,6 +34,7 @@ pub fn init_currency(mut commands: Commands, currency: Res<Currency>) {
     ));
 }
 
+//lose it when you buy something
 pub fn update_currency(
     mut currency: ResMut<Currency>,
     mut event_update: EventReader<UpdateCurrencyEvent>,

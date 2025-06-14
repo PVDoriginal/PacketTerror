@@ -7,6 +7,8 @@ pub struct HealthTest {
     pub value: i32,
 }
 
+//automated testing
+
 #[test]
 fn test_health() {
     let mut app = App::new();

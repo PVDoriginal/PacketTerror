@@ -59,6 +59,7 @@ fn update_ui(
         .world_to_viewport(camera.1, item_transform.translation())
         .expect("camera panik");
 
+    //shows info to the top right of an item
     hover_window.top = Val::Px(pos.y + 10.);
     hover_window.left = Val::Px(pos.x + 10.);
 
@@ -126,6 +127,7 @@ fn init_ui(mut commands: Commands) {
         .add_child(hover_cost);
 }
 
+//managing the hovering of items in the grid
 fn make_hoverable(
     items: Query<Entity, (Added<ItemType>, Without<ShopPosition>)>,
     mut commands: Commands,

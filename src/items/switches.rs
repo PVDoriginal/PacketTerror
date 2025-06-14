@@ -39,6 +39,7 @@ fn shoot_projectiles(
                     .reverse()
             }) {
                 commands.spawn((
+                    //spawns a projectile when your own packet reaches the switch
                     Projectile {
                         target,
                         projectile_type,

@@ -6,6 +6,8 @@ pub struct Shake {
     timer: Timer,
     initial_pos: Vec3,
 }
+
+//decide how strong and how long will the shake be
 impl Shake {
     pub fn new(strength: f32, duration: f32, initial_pos: Vec3) -> Self {
         Self {
@@ -16,6 +18,7 @@ impl Shake {
     }
 }
 
+//shaking that grid
 fn shake(
     mut shakable: Query<(Entity, &mut Shake, &mut Transform)>,
     mut commands: Commands,

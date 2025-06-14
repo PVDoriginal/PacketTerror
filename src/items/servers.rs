@@ -50,6 +50,7 @@ fn create_packets(
 
         let cables = get_adj_cables(packet_sender.translation.truncate(), &cables, &grid);
 
+        //spawns packets into all adjacent cables
         for (cable_pos, adj_space) in cables {
             commands.spawn((
                 PlayerPacket,

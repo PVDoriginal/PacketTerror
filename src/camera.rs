@@ -54,6 +54,7 @@ pub fn update_screen(
     let half_width = (window.width() / 2.0) * projection.scale;
     let half_height = (window.height() / 2.0) * projection.scale;
 
+    //right in the middle
     screen.rect = Rect::new(
         center.x - half_width,
         center.y + half_height,

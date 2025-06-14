@@ -23,11 +23,13 @@ impl Plugin for LevelsPlugin {
     }
 }
 
+//despawn the menu
 fn despawn_levels(mut commands: Commands, levels_menu: Query<Entity, With<LevelsMenu>>) {
     let levels_menu = levels_menu.single();
     commands.entity(levels_menu).despawn_recursive();
 }
 
+//get to a level or back to menu
 fn on_easy(
     mut event: EventReader<EasyBtnPress>,
     mut next_state: ResMut<NextState<GameStates>>,

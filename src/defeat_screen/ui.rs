@@ -5,6 +5,7 @@ use crate::game::GameStates;
 
 use super::DefeatScreen;
 
+//colors
 const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.35, 0.35);
@@ -30,6 +31,7 @@ impl Plugin for DefeatUIPlugin {
     }
 }
 
+//managing button interactions
 fn button_system(
     mut interaction_query: Query<
         (
@@ -67,6 +69,7 @@ fn button_system(
     }
 }
 
+//creating the UI
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn((

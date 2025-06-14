@@ -29,6 +29,7 @@ pub mod victory_screen;
 #[cfg(test)]
 pub mod testing;
 
+//nothing much to say, just implementing all the plugins and modules created
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))

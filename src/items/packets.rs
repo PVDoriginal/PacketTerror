@@ -46,6 +46,7 @@ pub struct PacketStats {
     pub damage: i32,
 }
 
+//stats of all 3 types of packets
 impl Into<PacketStats> for PacketType {
     fn into(self) -> PacketStats {
         match self {

@@ -89,7 +89,7 @@ pub fn can_place_item(
     currency: &Res<Currency>,
 ) -> bool {
     if currency.value < item_type.price() as i32 {
-        return false;
+        return false; //if you can't afford it
     }
     grid.inside_grid(transform.translation.truncate())
 }

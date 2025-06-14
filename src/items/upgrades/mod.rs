@@ -85,6 +85,7 @@ fn init_upgrades<T: Upgradable + Component>(
 }
 
 fn start_upgrade<T: Upgradable + Component>(
+    //hold to upgrade
     trigger: Trigger<Pointer<Down>>,
     mut items: Query<(&Transform, &mut UpgradeLevel)>,
     currency: ResMut<Currency>,
@@ -117,6 +118,7 @@ fn start_upgrade<T: Upgradable + Component>(
     ));
 }
 fn end_upgrade<T: Upgradable + Component>(
+    //upgraded (you need to let go and hold again to upgrade one more time)
     _: Trigger<Pointer<Up>>,
     mut upgrade_timer: ResMut<UpgradeTimer>,
     mut commands: Commands,

@@ -22,6 +22,7 @@ pub struct Grid {
     grid: [[Option<Entity>; GRID_M]; GRID_N],
 }
 
+//make the matrix grid
 impl Grid {
     pub fn reset(&mut self) {
         for i in 0..GRID_N {
@@ -32,6 +33,7 @@ impl Grid {
     }
 
     fn inside_grid(&self, mut pos: Vec2) -> bool {
+        //checks if a position is actually in the grid
         pos += SPRITE_SIZE / 2.;
         if pos.x >= GRID_N as f32 * SPRITE_SIZE || pos.x < 0. {
             return false;
@@ -112,7 +114,7 @@ pub fn init_grid(mut commands: Commands, asset_server: Res<AssetServer>) {
         for j in 0..GRID_M {
             commands
                 .spawn((
-                    Sprite::from_image(asset_server.load("grid_cell.png")),
+                    Sprite::from_image(asset_server.load("grid_cell.png")), //spawn the grid squares
                     Transform::from_translation(vec3(
                         (i as f32 - 0.5) * SPRITE_SIZE,
                         (j as f32 - 0.5) * SPRITE_SIZE,
@@ -120,7 +122,7 @@ pub fn init_grid(mut commands: Commands, asset_server: Res<AssetServer>) {
                     )),
                     Name::new("Grid Cell"),
                 ))
-                .set_parent(grid);
+                .set_parent(grid); //as the children of the grid
         }
     }
 }

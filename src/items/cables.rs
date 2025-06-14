@@ -23,6 +23,7 @@ impl Plugin for CablesPlugin {
     }
 }
 
+//move packets through cables
 fn move_packets(
     time: Res<Time>,
     mut packets: Query<(Entity, &mut Transform, &Packet)>,
